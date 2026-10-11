@@ -446,6 +446,15 @@ body.land .cho .ic{width:32px;height:32px}
   </div>
 </div>
 <script>
+/* GA4 custom events (Games by Zaib). Safe: never throws, light (no per-frame calls, dedupe + per-page cap). */
+var ZT_N = 0, ZT_K = '', ZT_KT = 0, ZT_T = 0, ZT_S = 0, ZT_H = 0;
+function zt(n, p) { try { var k = n + JSON.stringify(p || 0), t = Date.now(); if (ZT_N > 150 || (k === ZT_K && t - ZT_KT < 500)) return; ZT_N++; ZT_K = k; ZT_KT = t; window.gtag && gtag('event', n, Object.assign({ game_id: 'kedim-therapist' }, p)); } catch (e) {} }
+function ztPlay(on) { try { var t = Date.now(); if (ZT_S) { ZT_T += (t - ZT_S) / 1e3; ZT_S = 0; } if (on) ZT_S = t; } catch (e) {} }
+function ztPing(r) { try { ztPlay(false); if (ZT_T >= 1) zt('play_time', { play_time: Math.round(ZT_T), reason: r }); ZT_T = 0; } catch (e) {} }
+try {
+  document.addEventListener('visibilitychange', function () { if (document.hidden) { ZT_H = !!ZT_S; ztPing('page_hide'); } else if (ZT_H) { ZT_H = 0; ztPlay(true); } });
+  document.addEventListener('click', function (e) { try { var a = e.target && e.target.closest && e.target.closest('a[href]'); if (!a) return; var u = new URL(a.href, location.href); if (!/^https?:$/.test(u.protocol)) return; if (u.host === location.host || /(^|\.)zaibgames\.com$/.test(u.host)) { if (u.pathname.indexOf('/kedim-therapist/') !== 0) zt('more_games_click', { link_url: u.href }); } else zt('outbound_click', { link_url: u.href, link_domain: u.host, outbound: true }); } catch (err) {} }, true);
+} catch (e) {}
 'use strict';
 // ================= utilities & save =================
 const TAU = Math.PI * 2;
@@ -2508,6 +2517,7 @@ function startSession(data, opts) {
   setState('session');
   $('sessTitle').textContent = (S.walk ? (S.daily ? '☀️ Daily Patient: ' : '🚪 Walk-in: ') + S.name : S.name + ' · Session ' + data.n + '/3: ' + data.title);
   updateMoodUI(true); nextStep();
+  { const zm = S.walk ? (S.daily ? 'daily' : 'walkin') : 'story', zl = S.walk ? 'walkin' : String(data.id); zt('game_start', { mode: zm, level: zl }); zt('level_start', { level: zl, level_name: S.name, mode: zm }); ztPlay(true); }
 }
 function curStep() { const S = G.sess; return S.steps[S.si]; }
 function nextStep() {
@@ -2639,7 +2649,7 @@ function updateMini(dt) {
 }
 function finishMini() {
   const S = G.sess, g = G.mini; G.mini = null;
-  const sc = clamp(g.score, 0, 1); S.miniScore = sc;
+  const sc = clamp(g.score, 0, 1); S.miniScore = sc; zt('minigame_complete', { minigame: String(S.data.mini), score: Math.round(sc * 100) });
   const gain = Math.round(sc * 30 * (1 + 0.1 * (SAVE.upg.noise || 0)));
   S.mood = clamp(S.mood + gain, 0, 100); SAVE.stats.minis++; if (g.perfect && sc >= 0.95) SAVE.stats.perfectMini++;
   setState('session');
@@ -2715,7 +2725,15 @@ function endSession() {
     if (S.daily) { const t = todayStr(), y = todayStr(new Date(Date.now() - 864e5)); SAVE.daily.streak = SAVE.daily.last === y ? SAVE.daily.streak + 1 : 1; SAVE.daily.last = t; SAVE.daily.date = t; SAVE.daily.done = true; }
     else if (G.walk) { if (stars >= 2) G.walk.count++; else G.walk.strikes++; SAVE.stats.bestStreak = Math.max(SAVE.stats.bestStreak, G.walk.count); }
   }
-  saveGame(); checkAch(); G.lastRes = R;
+  saveGame();
+  { const zm = S.walk ? (S.daily ? 'daily' : 'walkin') : 'story', zl = S.walk ? 'walkin' : String(d.id);
+    zt('level_end', { level: zl, level_name: S.name, mode: zm, success: R.pass, stars: stars });
+    if (!R.pass) zt('game_over', { score: stars, level: zl, mode: zm });
+    if (!S.walk && R.pass && R.first) zt('post_score', { score: stars, level: zl, mode: zm });
+    if (coins > 0) zt('earn_virtual_currency', { virtual_currency_name: 'coins', value: coins, item_name: zm + '_session' });
+    if (R.grad) zt('unlock_achievement', { achievement_id: 'graduate_' + d.pid });
+    ztPing('session_end'); }
+  checkAch(); G.lastRes = R;
   showResults(S, R);
 }
 function showResults(S, R) {
@@ -2868,7 +2886,7 @@ function achDone(id) {
   return false;
 }
 function checkAch() {
-  for (const a of ACHS) if (!SAVE.ach[a.id] && achDone(a.id)) { SAVE.ach[a.id] = 1; SAVE.coins += a.r; SAVE.totalCoins += a.r; toast('🏆 ' + a.name + '  +' + a.r, 'ach'); SFX.sparkle(); }
+  for (const a of ACHS) if (!SAVE.ach[a.id] && achDone(a.id)) { SAVE.ach[a.id] = 1; SAVE.coins += a.r; zt('unlock_achievement', { achievement_id: a.id }); zt('earn_virtual_currency', { virtual_currency_name: 'coins', value: a.r, item_name: 'award_' + a.id }); SAVE.totalCoins += a.r; toast('🏆 ' + a.name + '  +' + a.r, 'ach'); SFX.sparkle(); }
   saveGame(); if (G.state === 'hub') refreshHub();
 }
 function openAch() {
@@ -2930,12 +2948,12 @@ function renderShop() {
     UPGRADES.forEach(u => { const lv = SAVE.upg[u.id] || 0, max = lv >= u.max; const d = document.createElement('div'); d.className = 'ach' + (lv ? ' on' : '');
       d.innerHTML = '<div class="bdg" style="filter:none;opacity:1;background:radial-gradient(circle at 35% 30%,#fff,#ffe0c0)">' + icons[u.id] + '</div><div style="min-width:0"><div class="an">' + esc(u.name) + ' <span style="color:#f6a21e">' + '●'.repeat(lv) + '○'.repeat(u.max - lv) + '</span></div><div class="ad">' + esc(u.desc(Math.max(1, max ? lv : lv + 1))) + '</div></div>';
       const b = document.createElement('button'); b.className = 'btn sm ' + (max ? 'grey' : 'gold'); b.style.width = 'auto'; b.style.marginLeft = 'auto'; b.style.flex = 'none'; b.innerHTML = max ? 'MAX' : '<i class="coinI" style="width:16px;height:16px"></i>' + u.price[lv]; b.disabled = max;
-      b.onclick = () => { if (max) return; if (SAVE.coins < u.price[lv]) { SFX.miss(); toast('Not enough coins! Help more patients.'); return; } SAVE.coins -= u.price[lv]; SAVE.upg[u.id] = lv + 1; if (u.id === 'pillow') SAVE.hints++; SFX.buy(); toast(u.name + ' upgraded!'); saveGame(); checkAch(); renderShop(); };
+      b.onclick = () => { if (max) return; if (SAVE.coins < u.price[lv]) { SFX.miss(); toast('Not enough coins! Help more patients.'); return; } SAVE.coins -= u.price[lv]; SAVE.upg[u.id] = lv + 1; zt('spend_virtual_currency', { virtual_currency_name: 'coins', value: u.price[lv], item_name: u.name + ' ' + (lv + 1), item_category: 'upgrade' }); if (u.id === 'pillow') SAVE.hints++; SFX.buy(); toast(u.name + ' upgraded!'); saveGame(); checkAch(); renderShop(); };
       d.appendChild(b); g.appendChild(d); });
     const tip = document.createElement('div'); tip.className = 'tipbox'; tip.textContent = 'Decorations add coziness too: every cozy item makes patients arrive in a slightly better mood (max +14).'; g.appendChild(tip);
   }
 }
-function buy(it) { if (SAVE.coins < it.price) { SFX.miss(); toast('Not enough coins! Help more patients.'); return false; } SAVE.coins -= it.price; SAVE.owned[it.id] = 1; SFX.buy(); toast('Bought ' + it.name + '!'); vibrate(20); return true; }
+function buy(it) { if (SAVE.coins < it.price) { SFX.miss(); toast('Not enough coins! Help more patients.'); return false; } SAVE.coins -= it.price; SAVE.owned[it.id] = 1; zt('spend_virtual_currency', { virtual_currency_name: 'coins', value: it.price, item_name: it.name }); SFX.buy(); toast('Bought ' + it.name + '!'); vibrate(20); return true; }
 function spawnDecorFx() { spawn('spark', 200, 380, 16, { sp: 160, spread: 120, cols: ['#fff7c0', '#ffd0e8', '#c8f0ff'], life: 1.2 }); spawn('heart', KSEAT.x, KSEAT.y - 120, 3, { a: -Math.PI / 2, sp: 60 }); kedimExpr('happy', 2); }
 // ---------- settings / pause / modal ----------
 function refreshSettings() {
@@ -2982,8 +3000,8 @@ function wire() {
   on('bQuit', () => modal('Leave session?', 'The patient will wander off and come back later. No progress is lost.', [['Stay', 'grey', null], ['Leave', 'pink', () => { G.paused = false; G.mini = null; G.sess = null; G.walk = null; applyVolumes(); setState('hub'); }]]));
   on('bSetBack', () => { saveGame(); if (setReturn === 'title') show('sTitle'); else if (setReturn === 'pause') show('sPause'); else hideScreen('sSet'); });
   on('bReset', () => modal('Reset progress?', 'This erases all sessions, coins, decorations and awards. Kedim will forget you (he pretends to anyway).', [['Cancel', 'grey', null], ['Reset', 'pink', () => { try { localStorage.removeItem(SAVE_KEY); } catch (e) { } SAVE = DEF_SAVE(); saveGame(); resetObjs(); G.sess = null; G.walk = null; refreshSettings(); toast('Progress reset.'); setState('title'); }]]));
-  document.querySelectorAll('.tog').forEach(t => t.addEventListener('click', () => { ensureAudio(); const k = t.dataset.set; SAVE.settings[k] = !SAVE.settings[k]; saveGame(); applyVolumes(); refreshSettings(); SFX.click(); if (k === 'vibe' && SAVE.settings.vibe) vibrate(30); }));
-  document.querySelectorAll('.seg').forEach(s => s.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { ensureAudio(); const k = s.dataset.seg; SAVE.settings[k] = k === 'speed' ? +b.dataset.v : b.dataset.v; saveGame(); refreshSettings(); SFX.click(); if (k === 'gfx') applyGfx(); })));
+  document.querySelectorAll('.tog').forEach(t => t.addEventListener('click', () => { ensureAudio(); const k = t.dataset.set; SAVE.settings[k] = !SAVE.settings[k]; zt('settings_change', { setting: k, value: String(SAVE.settings[k]) }); saveGame(); applyVolumes(); refreshSettings(); SFX.click(); if (k === 'vibe' && SAVE.settings.vibe) vibrate(30); }));
+  document.querySelectorAll('.seg').forEach(s => s.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { ensureAudio(); const k = s.dataset.seg; SAVE.settings[k] = k === 'speed' ? +b.dataset.v : b.dataset.v; zt('settings_change', { setting: k, value: String(b.dataset.v) }); saveGame(); refreshSettings(); SFX.click(); if (k === 'gfx') applyGfx(); })));
   $('dlg').addEventListener('click', () => { ensureAudio(); tapDialogue(); });
   window.addEventListener('keydown', e => {
     if (e.key === 'Escape' || e.key === 'p') { if (G.paused) resumeGame(); else pauseGame(); }
