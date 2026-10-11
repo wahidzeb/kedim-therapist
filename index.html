@@ -63,7 +63,11 @@ canvas#game{position:fixed;left:0;top:0;width:100%;height:100%;display:block;tou
 .logo .l2 span{background:linear-gradient(180deg,#ffffff,#ffc0dc 50%,#ff5a9a);-webkit-background-clip:text;background-clip:text;-webkit-text-stroke:3px #5a2040}
 .logo .by{display:inline-block;margin-top:12px;font-size:18px;font-weight:900;color:#fff;background:linear-gradient(180deg,#8fd8ff,#3a8be0);padding:5px 18px;border-radius:999px;box-shadow:0 3px 0 #1a4f9a;letter-spacing:1px;-webkit-text-stroke:0}
 @keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-7px) rotate(2deg)}}
-.adslot{width:100%;max-width:468px;min-height:50px;flex:none;align-self:center;border-radius:10px}
+/* Ad slots stay fully hidden (no box, no label, no space) until a real ad is added: add class "live" to show one.
+   IMPORTANT: any future ad must sit at least 150px away from primary buttons (Play, Continue, Next, Resume, etc.)
+   so taps cannot land on the ad by accident. */
+.adslot{display:none!important}
+.adslot.live{display:block!important;width:100%;max-width:468px;min-height:50px;flex:none;align-self:center;margin-top:150px}
 .credit{font-size:13px;opacity:.85;text-align:center;font-weight:800;letter-spacing:.5px}
 .links{display:flex;gap:16px;justify-content:center;font-weight:800;font-size:14px}
 .links a{color:#fff;text-decoration:none;background:rgba(40,20,40,.45);padding:5px 12px;border-radius:999px;border:2px solid rgba(255,255,255,.3)}
@@ -270,7 +274,7 @@ body.land .cho .ic{width:32px;height:32px}
     <div class="links"><a href="https://zaibgames.com/" target="_blank" rel="noopener">More games</a><a href="https://zaibgames.com/privacy/" target="_blank" rel="noopener">Privacy</a></div>
     <div class="credit" id="titleCredit">A cozy comedy by Zaib · v1.0</div>
   </div>
-  <div class="adslot" aria-hidden="true"></div>
+  <!-- Ad slot: hidden until a real ad is added. A future ad must sit 150px+ away from primary buttons. --><div class="adslot" aria-hidden="true"></div>
 </div>
 
 <div id="sMiniIntro" class="screen dim hidden">
@@ -295,7 +299,7 @@ body.land .cho .ic{width:32px;height:32px}
     <div class="col" style="max-width:none;margin-top:12px;flex:none" id="resBtns"></div>
     <div class="credit" style="margin-top:8px">Game by Zaib</div>
   </div>
-  <div class="adslot" aria-hidden="true"></div>
+  <!-- Ad slot: hidden until a real ad is added. A future ad must sit 150px+ away from primary buttons. --><div class="adslot" aria-hidden="true"></div>
 </div>
 
 <div id="sEnding" class="screen dim hidden">
@@ -389,7 +393,7 @@ body.land .cho .ic{width:32px;height:32px}
     <div class="links" style="margin-bottom:12px"><a href="https://zaibgames.com/" target="_blank" rel="noopener">More games</a><a href="https://zaibgames.com/privacy/" target="_blank" rel="noopener">Privacy</a></div>
     <button class="btn gold" id="bSetBack">Back</button>
   </div>
-  <div class="adslot" aria-hidden="true"></div>
+  <!-- Ad slot: hidden until a real ad is added. A future ad must sit 150px+ away from primary buttons. --><div class="adslot" aria-hidden="true"></div>
 </div>
 
 <div id="sHelp" class="screen dim hidden">
@@ -431,7 +435,7 @@ body.land .cho .ic{width:32px;height:32px}
       <button class="btn grey" id="bQuit">Leave Session</button>
     </div>
   </div>
-  <div class="adslot" aria-hidden="true"></div>
+  <!-- Ad slot: hidden until a real ad is added. A future ad must sit 150px+ away from primary buttons. --><div class="adslot" aria-hidden="true"></div>
 </div>
 
 <div id="sModal" class="screen dim hidden" style="z-index:50">
@@ -1164,42 +1168,42 @@ function ensureAudio() {
   const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
   try {
     const c = AU.ctx = new AC();
-    AU.master = c.createGain(); AU.master.gain.value = 0.85;
-    const comp = c.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 4;
-    AU.master.connect(comp); comp.connect(c.destination);
-    AU.sfx = c.createGain(); AU.sfx.connect(AU.master);
+    AU.master = c.createGain(); AU.master.gain.value = 0.7;
+    const hp = c.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 60; hp.Q.value = 0.5; // kill DC / sub rumble phone speakers can't play
+    const comp = c.createDynamicsCompressor(); comp.threshold.value = -12; comp.knee.value = 6; comp.ratio.value = 12; comp.attack.value = 0.004; comp.release.value = 0.2; // limiter
+    AU.master.connect(hp); hp.connect(comp); comp.connect(c.destination);
+    AU.sfx = c.createGain(); AU.sfxLp = c.createBiquadFilter(); AU.sfxLp.type = 'lowpass'; AU.sfxLp.frequency.value = 7000; AU.sfxLp.Q.value = 0.5; AU.sfx.connect(AU.sfxLp); AU.sfxLp.connect(AU.master);
     AU.mus = c.createGain(); AU.mus.gain.value = 0; AU.mus.connect(AU.master);
-    AU.lp = c.createBiquadFilter(); AU.lp.type = 'lowpass'; AU.lp.frequency.value = 2400; AU.lp.Q.value = 0.4; AU.lp.connect(AU.mus);
-    AU.echo = c.createDelay(1); AU.echo.delayTime.value = 0.38; AU.fb = c.createGain(); AU.fb.gain.value = 0.3; const elp = c.createBiquadFilter(); elp.type = 'lowpass'; elp.frequency.value = 1500;
+    AU.lp = c.createBiquadFilter(); AU.lp.type = 'lowpass'; AU.lp.frequency.value = 2200; AU.lp.Q.value = 0.4; AU.lp.connect(AU.mus);
+    AU.echo = c.createDelay(1); AU.echo.delayTime.value = 0.38; AU.fb = c.createGain(); AU.fb.gain.value = 0.25; const elp = c.createBiquadFilter(); elp.type = 'lowpass'; elp.frequency.value = 1500;
     AU.musIn = c.createGain(); AU.musIn.connect(AU.lp); AU.musIn.connect(AU.echo); AU.echo.connect(elp); elp.connect(AU.fb); AU.fb.connect(AU.echo); elp.connect(AU.lp);
     AU.dry = c.createGain(); AU.dry.connect(AU.lp); // drums without echo
     const len = c.sampleRate * 2, buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0); for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1; AU.noise = buf;
-    // vinyl crackle bed
-    const cb = c.createBuffer(1, c.sampleRate * 3, c.sampleRate), cd = cb.getChannelData(0); for (let i = 0; i < cd.length; i++) { cd[i] = (Math.random() * 2 - 1) * 0.015 + (Math.random() < 0.0007 ? (Math.random() * 2 - 1) * 0.7 : 0); }
-    const cs = c.createBufferSource(); cs.buffer = cb; cs.loop = true; const cf = c.createBiquadFilter(); cf.type = 'highpass'; cf.frequency.value = 900; AU.crackle = c.createGain(); AU.crackle.gain.value = 0.5; cs.connect(cf); cf.connect(AU.crackle); AU.crackle.connect(AU.mus); cs.start();
     applyVolumes(); MUS.next = c.currentTime + 0.1; setInterval(musicTick, 25);
   } catch (e) { AU.ctx = null; }
 }
-function applyVolumes() { if (!AU.ctx) return; const t = AU.ctx.currentTime; AU.sfx.gain.setTargetAtTime(SAVE.settings.sound ? 0.8 : 0, t, 0.05); AU.mus.gain.setTargetAtTime(SAVE.settings.music ? (G && G.paused ? 0.07 : 0.26) : 0, t, 0.15); }
+function applyVolumes() { if (!AU.ctx) return; const t = AU.ctx.currentTime; AU.sfx.gain.setTargetAtTime(SAVE.settings.sound ? 0.7 : 0, t, 0.05); AU.mus.gain.setTargetAtTime(SAVE.settings.music ? (G && G.paused ? 0.05 : 0.2) : 0, t, 0.15); }
+function cleanup(src, nodes) { src.onended = () => { try { src.disconnect(); for (const n of nodes) n.disconnect(); } catch (e) { } }; }
 const mtof = n => 440 * Math.pow(2, (n - 69) / 12);
 function tone(f, t, d, type, v, dest, f2, att) {
   const c = AU.ctx; if (!c) return; const o = c.createOscillator(), g = c.createGain();
   o.type = type || 'square';
   o.frequency.setValueAtTime(f, t); if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
   g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + (att || 0.005)); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
-  o.connect(g); g.connect(dest || AU.sfx); o.start(t); o.stop(t + d + 0.03);
+  o.connect(g); g.connect(dest || AU.sfx); o.start(t); o.stop(t + d + 0.03); cleanup(o, [g]);
   return o;
 }
 function noise(t, d, v, type, freq, dest, f2, q) {
   const c = AU.ctx; if (!c) return; const s = c.createBufferSource(); s.buffer = AU.noise; const f = c.createBiquadFilter(); f.type = type || 'highpass'; f.frequency.setValueAtTime(freq || 1000, t); if (q) f.Q.value = q; if (f2) f.frequency.exponentialRampToValueAtTime(f2, t + d);
-  const g = c.createGain(); g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.0001, t + d); s.connect(f); f.connect(g); g.connect(dest || AU.sfx); s.start(t, Math.random() * 1.5); s.stop(t + d + 0.03);
+  const g = c.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + Math.min(0.006, d * 0.2)); g.gain.exponentialRampToValueAtTime(0.0001, t + d); s.connect(f); f.connect(g); g.connect(dest || AU.sfx); s.start(t, Math.random() * 1.5); s.stop(t + d + 0.03); cleanup(s, [f, g]);
 }
 // formant "voice" through bandpass filters
 function vox(t, f0, f1, d, v, formants, type) {
   const c = AU.ctx; if (!c) return; const o = c.createOscillator(); o.type = type || 'sawtooth'; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(30, f1), t + d);
   const g = c.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
-  for (const [ff, q, a] of formants) { const bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.setValueAtTime(ff, t); bp.Q.value = q; const ga = c.createGain(); ga.gain.value = a; o.connect(bp); bp.connect(ga); ga.connect(g); }
-  g.connect(AU.sfx); o.start(t); o.stop(t + d + 0.05);
+  const nodes = [g]; const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 3200; lp.Q.value = 0.4; nodes.push(lp);
+  for (const [ff, q, a] of formants) { const bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.setValueAtTime(ff, t); bp.Q.value = q; const ga = c.createGain(); ga.gain.value = a; o.connect(bp); bp.connect(ga); ga.connect(g); nodes.push(bp, ga); }
+  g.connect(lp); lp.connect(AU.sfx); o.start(t); o.stop(t + d + 0.05); cleanup(o, nodes);
 }
 function now() { return AU.ctx && SAVE.settings.sound && !G.silent ? AU.ctx.currentTime : -1; }
 function vibrate(p) { if (SAVE.settings.vibe && navigator.vibrate) try { navigator.vibrate(p); } catch (e) { } }
@@ -1208,31 +1212,40 @@ const SFX = {
   pop() { const t = now(); if (t < 0) return; tone(400, t, 0.09, 'sine', 0.25, null, 900); },
   meow(p) { const t = now(); if (t < 0) return; p = p || 1; vox(t, 520 * p, 420 * p, 0.42, 0.5, [[900 * p, 6, 1], [1800 * p, 8, 0.6], [3000, 10, 0.25]]); vox(t + 0.08, 700 * p, 560 * p, 0.3, 0.25, [[1300 * p, 5, 1]]); },
   mrrp() { const t = now(); if (t < 0) return; vox(t, 300, 520, 0.18, 0.35, [[700, 5, 1], [1500, 7, 0.5]]); },
-  purr(d) { const t = now(); if (t < 0) return; d = d || 1.2; const c = AU.ctx; const o = c.createOscillator(); o.type = 'sawtooth'; o.frequency.value = 26; const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 260; const g = c.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.35, t + 0.2); g.gain.setValueAtTime(0.35, t + d - 0.25); g.gain.exponentialRampToValueAtTime(0.0001, t + d); const am = c.createOscillator(); am.frequency.value = 1.6; const amg = c.createGain(); amg.gain.value = 0.15; am.connect(amg); amg.connect(g.gain); o.connect(lp); lp.connect(g); g.connect(AU.sfx); o.start(t); am.start(t); o.stop(t + d + 0.05); am.stop(t + d + 0.05); noise(t, d, 0.04, 'lowpass', 300); },
-  blip(pitch, kedim) { const t = now(); if (t < 0) return; const f = (kedim ? 230 : 330) * pitch * (0.9 + Math.random() * 0.25); const fm = [[600 + Math.random() * 700, 4, 1], [1700 + Math.random() * 900, 6, 0.5]]; vox(t, f, f * (0.85 + Math.random() * 0.3), 0.07, kedim ? 0.22 : 0.2, fm, kedim ? 'triangle' : 'square'); },
+  purr(d) { const t = now(); if (t < 0) return; d = d || 1.2; const c = AU.ctx;
+    // soft purr: a warm 150 Hz triangle tone, amplitude-modulated at ~24 Hz (the purr flutter) and breathing in/out
+    const o = c.createOscillator(); o.type = 'triangle'; o.frequency.setValueAtTime(150, t); o.frequency.linearRampToValueAtTime(135, t + d);
+    const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 420; lp.Q.value = 0.3;
+    const am = c.createGain(); am.gain.value = 0.5; const lfo = c.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 24; const lg = c.createGain(); lg.gain.value = 0.5; lfo.connect(lg); lg.connect(am.gain);
+    const env = c.createGain(); env.gain.setValueAtTime(0, t); env.gain.linearRampToValueAtTime(0.16, t + 0.18);
+    for (let k = 0.5; k < d - 0.3; k += 0.7) { env.gain.linearRampToValueAtTime(0.09, t + k); env.gain.linearRampToValueAtTime(0.16, t + k + 0.3); }
+    env.gain.setTargetAtTime(0, t + d - 0.25, 0.06);
+    o.connect(lp); lp.connect(am); am.connect(env); env.connect(AU.sfx);
+    o.start(t); lfo.start(t); o.stop(t + d + 0.2); lfo.stop(t + d + 0.2); cleanup(o, [lp, am, env]); cleanup(lfo, [lg]); },
+  blip(pitch, kedim) { const t = now(); if (t < 0) return; const f = (kedim ? 230 : 330) * pitch * (0.9 + Math.random() * 0.25); const fm = [[550 + Math.random() * 550, 3, 1], [1400 + Math.random() * 600, 5, 0.35]]; vox(t, f, f * (0.85 + Math.random() * 0.3), 0.07, kedim ? 0.2 : 0.17, fm, 'triangle'); },
   sparkle() { const t = now(); if (t < 0) return; [88, 93, 96, 100].forEach((n, i) => tone(mtof(n), t + i * 0.04, 0.25, 'sine', 0.06)); },
   good(k) { const t = now(); if (t < 0) return; k = k || 0; [72, 76, 79, 84].forEach((n, i) => { tone(mtof(n + k), t + i * 0.07, 0.35, 'triangle', 0.13); tone(mtof(n + k + 12), t + i * 0.07, 0.2, 'sine', 0.05); }); },
   ok() { const t = now(); if (t < 0) return; [72, 76].forEach((n, i) => tone(mtof(n), t + i * 0.08, 0.3, 'triangle', 0.12)); },
-  trombone() { const t = now(); if (t < 0) return; [[58, 0], [57, 0.32], [56, 0.64], [55, 0.96]].forEach(([n, d], i) => { const o = tone(mtof(n), t + d, i === 3 ? 0.9 : 0.34, 'sawtooth', 0.12, null, null, 0.04); if (i === 3 && o) { const l = AU.ctx.createOscillator(), lg = AU.ctx.createGain(); l.frequency.value = 6; lg.gain.value = 6; l.connect(lg); lg.connect(o.frequency); l.start(t + d); l.stop(t + d + 0.95); } }); },
+  trombone() { const t = now(); if (t < 0) return; [[58, 0], [57, 0.32], [56, 0.64], [55, 0.96]].forEach(([n, d], i) => { const o = tone(mtof(n), t + d, i === 3 ? 0.9 : 0.34, 'sawtooth', 0.12, null, null, 0.04); if (i === 3 && o) { const l = AU.ctx.createOscillator(), lg = AU.ctx.createGain(); l.frequency.value = 6; lg.gain.value = 6; l.connect(lg); lg.connect(o.frequency); l.start(t + d); l.stop(t + d + 0.95); cleanup(l, [lg]); } }); },
   coin() { const t = now(); if (t < 0) return; tone(mtof(88), t, 0.06, 'square', 0.05); tone(mtof(95), t + 0.055, 0.22, 'square', 0.05); },
-  buy() { const t = now(); if (t < 0) return; [76, 83, 88, 95].forEach((n, i) => tone(mtof(n), t + i * 0.06, 0.2, 'triangle', 0.13)); noise(t, 0.3, 0.05, 'highpass', 6000); },
+  buy() { const t = now(); if (t < 0) return; [76, 83, 88, 95].forEach((n, i) => tone(mtof(n), t + i * 0.06, 0.2, 'triangle', 0.13)); tone(mtof(100), t + 0.24, 0.3, 'sine', 0.04); },
   whoosh() { const t = now(); if (t < 0) return; noise(t, 0.35, 0.25, 'bandpass', 400, null, 2600, 1.2); },
   knock() { const t = now(); if (t < 0) return; for (let i = 0; i < 3; i++) { tone(170, t + i * 0.16, 0.09, 'sine', 0.5, null, 90); noise(t + i * 0.16, 0.05, 0.25, 'lowpass', 900); } },
   door() { const t = now(); if (t < 0) return; tone(300, t, 0.4, 'triangle', 0.05, null, 180); noise(t, 0.3, 0.08, 'bandpass', 500, null, 1200, 2); [84, 88].forEach((n, i) => tone(mtof(n), t + 0.1 + i * 0.25, 0.8, 'sine', 0.1)); },
-  crash() { const t = now(); if (t < 0) return; noise(t, 0.4, 0.4, 'highpass', 2500); for (let i = 0; i < 6; i++) tone(mtof(88 + Math.random() * 10), t + i * 0.025, 0.12, 'sine', 0.08); tone(140, t, 0.12, 'triangle', 0.3, null, 60); },
+  crash() { const t = now(); if (t < 0) return; noise(t, 0.3, 0.25, 'bandpass', 2200, null, null, 0.8); for (let i = 0; i < 6; i++) tone(mtof(88 + Math.random() * 10), t + i * 0.025, 0.12, 'sine', 0.08); tone(140, t, 0.12, 'triangle', 0.3, null, 60); },
   thud() { const t = now(); if (t < 0) return; tone(130, t, 0.14, 'sine', 0.4, null, 50); noise(t, 0.08, 0.15, 'lowpass', 600); },
   boing() { const t = now(); if (t < 0) return; const o = tone(180, t, 0.35, 'sine', 0.3, null, 520); },
   bonk() { const t = now(); if (t < 0) return; tone(520, t, 0.12, 'square', 0.1, null, 160); noise(t, 0.06, 0.2, 'bandpass', 1800); },
-  flip() { const t = now(); if (t < 0) return; noise(t, 0.08, 0.15, 'bandpass', 2500, null, 5000); tone(600, t, 0.06, 'sine', 0.06, null, 900); },
+  flip() { const t = now(); if (t < 0) return; noise(t, 0.07, 0.1, 'bandpass', 1800, null, 3000, 1); tone(600, t, 0.06, 'sine', 0.06, null, 900); },
   tick() { const t = now(); if (t < 0) return; tone(1400, t, 0.03, 'square', 0.04); },
   perfect() { const t = now(); if (t < 0) return; tone(mtof(91), t, 0.18, 'triangle', 0.14); tone(mtof(98), t + 0.05, 0.25, 'sine', 0.08); },
   miss() { const t = now(); if (t < 0) return; tone(220, t, 0.18, 'triangle', 0.15, null, 150); },
-  star(i) { const t = now(); if (t < 0) return; tone(mtof(79 + i * 4), t, 0.35, 'triangle', 0.15); tone(mtof(91 + i * 4), t, 0.25, 'sine', 0.06); noise(t, 0.3, 0.04, 'highpass', 6500); },
-  fanfare() { const t = now(); if (t < 0) return; [[67, 0], [72, .12], [76, .24], [79, .36], [84, .55], [79, .72], [84, .85], [88, 1.05]].forEach(([n, d]) => { tone(mtof(n), t + d, 0.35, 'triangle', 0.14); tone(mtof(n - 12), t + d, 0.3, 'sine', 0.12); }); noise(t + 1.05, 0.8, 0.06, 'highpass', 6000); },
+  star(i) { const t = now(); if (t < 0) return; tone(mtof(79 + i * 4), t, 0.35, 'triangle', 0.15); tone(mtof(91 + i * 4), t, 0.25, 'sine', 0.06); },
+  fanfare() { const t = now(); if (t < 0) return; [[67, 0], [72, .12], [76, .24], [79, .36], [84, .55], [79, .72], [84, .85], [88, 1.05]].forEach(([n, d]) => { tone(mtof(n), t + d, 0.35, 'triangle', 0.14); tone(mtof(n - 12), t + d, 0.3, 'sine', 0.12); }); [96, 100, 103].forEach((n, i) => tone(mtof(n), t + 1.05 + i * 0.05, 0.5, 'sine', 0.035)); },
   breatheIn() { const t = now(); if (t < 0) return; noise(t, 1.0, 0.06, 'bandpass', 500, null, 1400, 1); },
   fire() { const t = now(); if (t < 0) return; noise(t, 0.7, 0.35, 'lowpass', 300, null, 1500); tone(90, t, 0.6, 'sawtooth', 0.08, null, 60); },
   splash() { const t = now(); if (t < 0) return; noise(t, 0.4, 0.3, 'bandpass', 1200, null, 400, 1); for (let i = 0; i < 4; i++) tone(mtof(80 + Math.random() * 12), t + 0.05 + i * 0.05, 0.08, 'sine', 0.1); },
-  ghost() { const t = now(); if (t < 0) return; const o = tone(400, t, 1.0, 'sine', 0.15, null, 300, 0.2); if (o) { const l = AU.ctx.createOscillator(), lg = AU.ctx.createGain(); l.frequency.value = 5; lg.gain.value = 30; l.connect(lg); lg.connect(o.frequency); l.start(t); l.stop(t + 1); } },
+  ghost() { const t = now(); if (t < 0) return; const o = tone(400, t, 1.0, 'sine', 0.15, null, 300, 0.2); if (o) { const l = AU.ctx.createOscillator(), lg = AU.ctx.createGain(); l.frequency.value = 5; lg.gain.value = 30; l.connect(lg); lg.connect(o.frequency); l.start(t); l.stop(t + 1); cleanup(l, [lg]); } },
   species(sp) {
     const t = now(); if (t < 0) return;
     switch (sp) {
@@ -1241,13 +1254,13 @@ const SFX = {
       case 'pigeon': for (let i = 0; i < 2; i++) vox(t + i * 0.3, 380, 300, 0.25, 0.35, [[500, 6, 1], [900, 6, 0.3]], 'triangle'); break;
       case 'sloth': vox(t, 200, 120, 1.0, 0.3, [[500, 3, 1], [900, 4, 0.4]]); break;
       case 'peacock': vox(t, 700, 1100, 0.3, 0.3, [[1500, 4, 1], [2600, 5, 0.6]]); vox(t + 0.32, 900, 600, 0.25, 0.3, [[1400, 4, 1]]); break;
-      case 'raccoon': for (let i = 0; i < 5; i++) vox(t + i * 0.06, 800, 1000, 0.05, 0.2, [[1800, 5, 1]], 'square'); break;
+      case 'raccoon': for (let i = 0; i < 5; i++) vox(t + i * 0.06, 700, 900, 0.05, 0.18, [[1500, 4, 1]], 'triangle'); break;
       case 'ghost': SFX.ghost(); break;
       case 'chicken': for (let i = 0; i < 3; i++) vox(t + i * 0.13, 600, 500, 0.1, 0.3, [[1100, 5, 1], [2200, 6, 0.5]]); vox(t + 0.42, 600, 950, 0.32, 0.35, [[1200, 5, 1], [2400, 6, 0.5]]); break;
       case 'dragon': vox(t, 120, 70, 0.8, 0.5, [[400, 2, 1], [900, 3, 0.6]]); noise(t, 0.8, 0.25, 'lowpass', 600, null, 200); break;
       case 'owl': vox(t, 380, 340, 0.3, 0.4, [[450, 8, 1]], 'sine'); vox(t + 0.45, 380, 330, 0.45, 0.4, [[450, 8, 1]], 'sine'); break;
       case 'bear': vox(t, 180, 90, 1.1, 0.45, [[450, 3, 1], [800, 4, 0.5]]); break;
-      case 'mouse': for (let i = 0; i < 3; i++) tone(2400 + i * 300, t + i * 0.09, 0.07, 'sine', 0.1, null, 3200); break;
+      case 'mouse': for (let i = 0; i < 3; i++) tone(1500 + i * 200, t + i * 0.09, 0.07, 'sine', 0.08, null, 2100); break;
     }
   },
 };
@@ -1295,14 +1308,13 @@ function musicTick() {
       const ch = D.chords[bar % D.chords.length];
       if (s === 0) ch.forEach((n, k) => ep(mtof(n), t + k * 0.018, d * 15, 0.055));
       if (s === 10 && bar % 2 === 1) ch.slice(1, 4).forEach((n, k) => ep(mtof(n + 12), t + k * 0.02, d * 5, 0.03));
-      if (s === 0 || s === 7 || (s === 10 && bar % 2 === 0)) tone(mtof(ch[0] - 12), t, d * (s === 0 ? 6 : 3), 'sine', 0.22, AU.dry, null, 0.01);
+      if (s === 0 || s === 7 || (s === 10 && bar % 2 === 0)) tone(mtof(ch[0]), t, d * (s === 0 ? 6 : 3), 'triangle', 0.13, AU.dry, null, 0.015);
       const m = S2.mel[i]; if (m > 0) { tone(mtof(m), t, d * 3, 'triangle', 0.05, AU.musIn, null, 0.01); tone(mtof(m), t, d * 2, 'sine', 0.05, AU.musIn); }
       const dv = D.drums;
       if (dv) {
-        if (s === 0 || s === 10) tone(110, t, 0.18, 'sine', 0.42 * dv, AU.dry, 40);
-        if (s === 4 || s === 12) { noise(t, 0.16, 0.12 * dv, 'bandpass', 1700, AU.dry, null, 0.8); tone(190, t, 0.08, 'triangle', 0.08 * dv, AU.dry, 140); }
-        if (s % 2 === 0) noise(t, 0.03, (s % 4 === 2 ? 0.05 : 0.03) * dv, 'highpass', 7500, AU.dry);
-        if (s === 14 && bar % 4 === 3) noise(t, 0.06, 0.04 * dv, 'highpass', 6000, AU.dry);
+        if (s === 0 || s === 10) tone(150, t, 0.16, 'sine', 0.3 * dv, AU.dry, 70);
+        if (s === 4 || s === 12) { noise(t, 0.09, 0.05 * dv, 'bandpass', 1400, AU.dry, null, 1.2); tone(200, t, 0.09, 'triangle', 0.09 * dv, AU.dry, 150); }
+        if (s % 4 === 2) tone(2600, t, 0.025, 'triangle', 0.012 * dv, AU.dry); // soft rim tick (tonal, not noise)
       }
     }
     MUS.next += d; MUS.step++;
