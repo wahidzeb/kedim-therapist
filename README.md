@@ -2,7 +2,7 @@
 
 A cozy, funny therapy-office game for mobile and desktop browsers.
 
-You play as **Dr. Kedim**, a glossy black cat therapist with bright yellow-green eyes and a red scarf, a dry sense of humour, a Ph.D. in Napping, and a habit of knocking things off the desk. Silly animal patients come to his office with funny problems. A dog is terrified of the mailman. A ghost is scared of the dark. A dragon has anger issues and keeps setting the couch on fire. Help them all feel better and graduate.
+You play as **Dr. Kedim**, a ginger tabby cat therapist with a red scarf, a dry sense of humour, a Ph.D. in Napping, and a habit of knocking things off the desk. Silly animal patients come to his office with funny problems. A dog is terrified of the mailman. A ghost is scared of the dark. A dragon has anger issues and keeps setting the couch on fire. Help them all feel better and graduate.
 
 **Play:** https://zaibgames.com/kedim-therapist/
 
@@ -14,6 +14,8 @@ You play as **Dr. Kedim**, a glossy black cat therapist with bright yellow-green
 - **7 therapy mini-games**: Breathe With Me, Untangle Thoughts (yarn), Feelings Match, Worry Jar, Ink Blot Test, Purr Therapy and Whack-a-Thought.
 - **Coins and star reviews**, plus a day/week appointment calendar.
 - **Shop**: 30 office decorations that appear in the office, 21 Kedim outfits, 9 fur colours, and 5 upgrades (tea, blanket, white noise, treats, nap pillow).
+- **Office pets**: Ducky the duck and Pepper the black cat wander the office, react to patients and taps, and help out with small bonuses (toggle them in Settings).
+- **Midnight office theme**: a moonlit night office with warm lamp glow and stars (Settings).
 - **Kedim's Notebook**: patient files with session notes and reviews.
 - **26 achievements**.
 - **Endless walk-in clinic** with randomly generated patients, plus a **daily patient** that pays double coins and builds a streak.

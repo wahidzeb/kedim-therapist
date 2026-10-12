@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://zaibgames.com/kedim-therapist/screenshot.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M10 30 14 6l14 12h8l14-12 4 24c0 16-10 26-22 26S10 46 10 30z' fill='%232b2e3b' stroke='%239fb4dc' stroke-width='4' stroke-linejoin='round'/%3E%3Cpath d='M17 26 17 15l7 7zM47 26l0-11-7 7z' fill='%23ffb3c1'/%3E%3Ccircle cx='23' cy='32' r='6' fill='%23c6ef3e'/%3E%3Ccircle cx='41' cy='32' r='6' fill='%23c6ef3e'/%3E%3Ccircle cx='23' cy='32' r='2.5' fill='%2314151c'/%3E%3Ccircle cx='41' cy='32' r='2.5' fill='%2314151c'/%3E%3Cpath d='M29 42h6l-3 3z' fill='%23ff7a95'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M10 30 14 6l14 12h8l14-12 4 24c0 16-10 26-22 26S10 46 10 30z' fill='%23ff9d3c' stroke='%233a2630' stroke-width='4' stroke-linejoin='round'/%3E%3Ccircle cx='23' cy='32' r='7' fill='none' stroke='%233a2630' stroke-width='3'/%3E%3Ccircle cx='41' cy='32' r='7' fill='none' stroke='%233a2630' stroke-width='3'/%3E%3Cpath d='M29 42h6l-3 3z' fill='%23ff7a95'/%3E%3C/svg%3E">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#3a2340;color:#4a2a1a;font-family:"Trebuchet MS",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;overscroll-behavior:none;-webkit-text-size-adjust:100%;touch-action:none}
@@ -386,6 +386,9 @@ body.land .cho .ic{width:32px;height:32px}
       <div class="set">Music<div class="tog" data-set="music"></div></div>
       <div class="set">Vibration<div class="tog" data-set="vibe"></div></div>
       <div class="set">Text speed<div class="seg" data-seg="speed"><button data-v="0">Slow</button><button data-v="1">Normal</button><button data-v="2">Fast</button><button data-v="3">Instant</button></div></div>
+      <div class="set">Office theme<div class="seg" data-seg="theme"><button data-v="day">Day</button><button data-v="midnight">Midnight</button></div></div>
+      <div class="set">🦆 Pet: Ducky<div class="tog" data-set="petDuck"></div></div>
+      <div class="set">🐈‍⬛ Pet: Pepper the cat<div class="tog" data-set="petCat"></div></div>
       <div class="set">Graphics<div class="seg" data-seg="gfx"><button data-v="auto">Auto</button><button data-v="high">High</button><button data-v="low">Low</button></div></div>
       <div class="set">Progress<button class="btn pink sm" id="bReset" style="width:auto">Reset</button></div>
     </div>
@@ -491,7 +494,8 @@ const DEF_SAVE = () => ({
   ach: {},
   stats: { sessions: 0, five: 0, minis: 0, perfectMini: 0, walkins: 0, bestStreak: 0, knocks: 0, pets: 0, wrong: 0, funny: 0, naps: 0, hints: 0, blots: 0 },
   daily: { date: '', done: false, streak: 0, last: '' },
-  settings: { sound: true, music: true, vibe: true, speed: 1, gfx: 'auto' },
+  settings: { sound: true, music: true, vibe: true, speed: 1, gfx: 'auto', petDuck: true, petCat: true, theme: 'day' },
+  petGift: {},
   seenHelp: false, hints: 3,
 });
 let SAVE = DEF_SAVE();
@@ -611,9 +615,9 @@ function drawEmote(c, type, x, y, t, a, s) {
 }
 
 // ---------- Kedim the therapist cat ----------
-// Kedim: glossy black cat with blue-grey rim light, yellow-green eyes, pink nose/inner ears, red scarf.
+// echoes Kedimz Adventure hero: ginger tabby, cream belly/muzzle, red scarf, pink-lined ears, big shiny brown eyes.
 const FURS = [
-  { id: 'ginger', name: 'Classic Black', price: 0, fur: '#2b2e3b', fur2: '#14151c', belly: '#3a3f52', stripe: '#1d1f2a', eye: '#c6ef3e', black: true, rim: '#9fb4dc', ol: '#56648a', line: '#c3d0ea' },
+  { id: 'ginger', name: 'Ginger', price: 0, fur: '#ff9d3c', fur2: '#e2711d', belly: '#fff1dc', stripe: '#d0601a' },
   { id: 'midnight', name: 'Midnight', price: 300, fur: '#4a4462', fur2: '#2c2840', belly: '#77709a', stripe: '#211d33', eye: '#ffe14a' },
   { id: 'snow', name: 'Snowball', price: 400, fur: '#f7f7fb', fur2: '#d4d6e4', belly: '#ffffff', stripe: '#c4c8de' },
   { id: 'grey', name: 'Grey Tabby', price: 400, fur: '#a3aab6', fur2: '#737a87', belly: '#eceef2', stripe: '#5d6370' },
@@ -623,9 +627,11 @@ const FURS = [
   { id: 'galaxy', name: 'Galaxy', price: 1500, fur: '#5b3fae', fur2: '#2c1a6b', belly: '#9d7bff', stripe: '#1c0f4a', galaxy: true, eye: '#5ff2ff' },
   { id: 'gold', name: 'Golden', price: 2500, fur: '#ffd34a', fur2: '#e6a817', belly: '#fff3b8', stripe: '#c98a0c', gold: true },
 ];
+// office pet: black cat (not a Kedim fur) - rich black fur, blue-grey rim light, yellow-green eyes
+const PET_CAT_SKIN = { id: 'petcat', fur: '#2b2e3b', fur2: '#14151c', belly: '#3a3f52', stripe: '#1d1f2a', eye: '#c6ef3e', black: true, rim: '#9fb4dc', ol: '#56648a', line: '#c3d0ea' };
 // o: {t, blink, expr, talk, pose:'write'|'nap'|'paw'|'purr'|'wave'|'stretch', pk (pose progress 0..1), outfit, fur, scale, noPad}
 function drawKedim(c, x, y, o) {
-  const sk = FURS.find(f => f.id === o.fur) || FURS[0], of = o.outfit || {}, t = o.t || 0, pose = o.pose || 'write', pk = o.pk || 0;
+  const sk = o.skin || FURS.find(f => f.id === o.fur) || FURS[0], of = o.outfit || {}, t = o.t || 0, pose = o.pose || 'write', pk = o.pk || 0;
   const ol = sk.ol || OUT, ln = sk.line || OUT;
   const rimE = (cx, cy, rx, ry) => { if (!sk.rim) return; c.save(); c.strokeStyle = sk.rim; c.globalAlpha = 0.85; c.lineWidth = 2.2; c.beginPath(); c.ellipse(cx, cy, rx - 3, ry - 3, 0, Math.PI * 1.02, Math.PI * 1.55); c.stroke(); c.globalAlpha = 0.45; c.lineWidth = 1.6; c.beginPath(); c.ellipse(cx, cy, rx - 3, ry - 3, 0, Math.PI * 1.75, Math.PI * 1.98); c.stroke(); c.restore(); };
   c.save(); c.translate(x, y); const sc = o.scale || 1; c.scale(sc * (o.flip ? -1 : 1), sc); c.lineJoin = 'round'; c.lineCap = 'round';
@@ -751,6 +757,7 @@ const WALLS = {
   wall2: { a: '#cdeedd', b: '#b4e0c9', stripe: 'rgba(255,255,255,.3)', trim: '#5a8f72' },
   wall3: { a: '#e3d4f5', b: '#d2bfee', stripe: 'rgba(255,255,255,.3)', trim: '#7a5aa8' },
   wall4: { a: '#2a2e5e', b: '#1d2048', stripe: 'rgba(255,255,255,.04)', trim: '#4a3a7a', stars: true },
+  midnight: { a: '#252a5c', b: '#181b42', stripe: 'rgba(170,190,255,.045)', trim: '#3b3270', stars: true },
   wall5: { a: '#ffd9e4', b: '#ffc4d4', stripe: 'rgba(255,255,255,.35)', trim: '#c25a7a' },
 };
 const FLOORY = 430;
@@ -759,7 +766,7 @@ function drawSky(c, x, y, w, h, tod, t) {
   const skies = [['#7ec8ff', '#bfe6ff', '#fff4d6'], ['#5fb0f0', '#a8dcff', '#ffe9b8'], ['#3a2a78', '#c2577a', '#ffb067'], ['#0d1236', '#1f2a5e', '#3a3f7a']];
   c.fillStyle = lgrad(c, 0, y, 0, y + h, skies[tod]); c.fillRect(x, y, w, h);
   if (tod === 2) { glow(c, x + w * 0.7, y + h * 0.8, 40, '#ffb347', 0.9); ell(c, x + w * 0.7, y + h * 0.82, 14, 14); c.fillStyle = '#ffd38a'; c.fill(); }
-  else if (tod === 3) { c.fillStyle = '#fff7d0'; ell(c, x + w * 0.72, y + h * 0.28, 11, 11); c.fill(); glow(c, x + w * 0.72, y + h * 0.28, 30, '#fff3c0', 0.6); for (let i = 0; i < 9; i++) { c.globalAlpha = 0.5 + 0.5 * Math.sin(t * 2 + i); c.fillRect(x + ((i * 37) % w), y + ((i * 23) % (h * 0.7)), 2, 2); } c.globalAlpha = 1; }
+  else if (tod === 3) { const mx = x + w * 0.72, my = y + h * 0.28; glow(c, mx, my, 46, '#c8d8ff', 0.45); ell(c, mx, my, 14, 14); c.fillStyle = rgrad(c, mx, my, 2, 15, ['#fffbe6', '#f3eac4', '#d8cc9e'], -4, -5); c.fill(); c.fillStyle = 'rgba(170,150,100,.35)'; ell(c, mx - 4, my - 3, 3.2, 2.6); c.fill(); ell(c, mx + 5, my + 4, 2.4, 2); c.fill(); ell(c, mx + 3, my - 6, 1.6, 1.3); c.fill(); glow(c, x + w * 0.72, y + h * 0.28, 30, '#fff3c0', 0.6); for (let i = 0; i < 9; i++) { c.globalAlpha = 0.5 + 0.5 * Math.sin(t * 2 + i); c.fillRect(x + ((i * 37) % w), y + ((i * 23) % (h * 0.7)), 2, 2); } c.globalAlpha = 1; }
   else { glow(c, x + w * 0.25, y + h * 0.2, 36, '#fff7c0', 0.8); }
   // clouds
   c.fillStyle = tod === 3 ? 'rgba(120,130,190,.35)' : tod === 2 ? 'rgba(255,200,210,.7)' : 'rgba(255,255,255,.9)';
@@ -771,7 +778,7 @@ function drawSky(c, x, y, w, h, tod, t) {
 }
 function drawOffice(c, t, st) {
   // st: {decor, upg, tod (0 morning,1 noon,2 evening), kedim:{...}, patient fn, objs}
-  const D = st.decor, W = WALLS[D.wall || 'wall1'] || WALLS.wall1, tod = st.tod || 0;
+  const D = st.decor, W = st.mid ? WALLS.midnight : (WALLS[D.wall || 'wall1'] || WALLS.wall1), tod = st.tod || 0;
   // wall
   c.fillStyle = lgrad(c, 0, -700, 0, FLOORY, [shade(W.a, -0.1), W.a, W.b]); c.fillRect(-1400, -900, 3200, FLOORY + 900);
   c.fillStyle = W.stripe; for (let x = -1400; x < 1800; x += 36) c.fillRect(x, -900, 14, FLOORY + 900);
@@ -795,6 +802,7 @@ function drawOffice(c, t, st) {
   rr(c, wx - 14, wy + wh + 4, ww + 28, 10, 4); fillStroke(c, '#f0dcc4', 2.5);
   if (D.curtain) { const cc = D.curtain === 'curt2' ? ['#7ad0c0', '#3a9a8a'] : ['#ff8aa0', '#d4566e']; for (const sd of [0, 1]) { const cx0 = sd ? wx + ww + 10 : wx - 10; c.fillStyle = lgrad(c, cx0 - 20, 0, cx0 + 20, 0, cc); c.beginPath(); c.moveTo(cx0 - 18, wy - 16); c.lineTo(cx0 + 18, wy - 16); const sw = Math.sin(t * 1.2 + sd) * 3; c.quadraticCurveTo(cx0 + (sd ? -4 : 4) + sw, wy + 80, cx0 + 14, wy + wh + 10); c.lineTo(cx0 - 14, wy + wh + 10); c.quadraticCurveTo(cx0 + sw, wy + 80, cx0 - 18, wy - 16); fillStroke(c, c.fillStyle, 2.5); } rr(c, wx - 30, wy - 22, ww + 60, 8, 4); fillStroke(c, '#a8693f', 2); }
   // light shaft from window
+  if (st.mid && QUALITY.lvl > 0) { c.save(); c.globalCompositeOperation = 'lighter'; c.fillStyle = lgrad(c, wx, wy, wx + 140, wy + 420, ['rgba(150,180,255,.16)', 'rgba(150,180,255,0)']); c.beginPath(); c.moveTo(wx, wy); c.lineTo(wx + ww, wy); c.lineTo(wx + ww + 160, FLOORY + 140); c.lineTo(wx + 60, FLOORY + 140); c.closePath(); c.fill(); c.restore(); }
   if (tod < 3 && QUALITY.lvl > 1) { c.save(); c.globalCompositeOperation = 'lighter'; c.fillStyle = lgrad(c, wx, wy, wx + 140, wy + 420, [tod === 2 ? 'rgba(255,150,80,.16)' : 'rgba(255,240,200,.14)', 'rgba(255,240,200,0)']); c.beginPath(); c.moveTo(wx, wy); c.lineTo(wx + ww, wy); c.lineTo(wx + ww + 160, FLOORY + 140); c.lineTo(wx + 60, FLOORY + 140); c.closePath(); c.fill(); c.restore(); }
   // clock
   const clx = 222, cly = 70; ell(c, clx, cly, 24, 24); fillStroke(c, '#fff8ec', 3); ell(c, clx, cly, 24, 24); c.strokeStyle = '#a8693f'; c.lineWidth = 4; c.stroke();
@@ -816,7 +824,7 @@ function drawOffice(c, t, st) {
   // aquarium cabinet
   if (D.aqua) drawAqua(c, D.aqua, 200, FLOORY, t);
   // lava / floor lamp
-  if (D.lamp) drawLamp(c, D.lamp, 262, FLOORY, t, tod);
+  if (D.lamp || st.mid) drawLamp(c, D.lamp || 'lamp1', 262, FLOORY, t, tod);
   // cat tree left
   if (D.tree) drawTree(c, D.tree, 18, FLOORY + 10, t);
   // rug
@@ -1228,6 +1236,7 @@ const SFX = {
   click() { const t = now(); if (t < 0) return; tone(700, t, 0.05, 'triangle', 0.12); tone(1050, t + 0.025, 0.06, 'sine', 0.08); },
   pop() { const t = now(); if (t < 0) return; tone(400, t, 0.09, 'sine', 0.25, null, 900); },
   meow(p) { const t = now(); if (t < 0) return; p = p || 1; vox(t, 520 * p, 420 * p, 0.42, 0.5, [[900 * p, 6, 1], [1800 * p, 8, 0.6], [3000, 10, 0.25]]); vox(t + 0.08, 700 * p, 560 * p, 0.3, 0.25, [[1300 * p, 5, 1]]); },
+  quack(p, v) { const t = now(); if (t < 0) return; p = p || 1; v = v || 0.7; vox(t, 560 * p, 380 * p, 0.13, 0.32 * v, [[1150 * p, 4, 1], [2400 * p, 6, 0.5]], 'square'); vox(t + 0.14, 520 * p, 340 * p, 0.15, 0.28 * v, [[1100 * p, 4, 1], [2300 * p, 6, 0.5]], 'square'); },
   mrrp() { const t = now(); if (t < 0) return; vox(t, 300, 520, 0.18, 0.35, [[700, 5, 1], [1500, 7, 0.5]]); },
   purr(d) { const t = now(); if (t < 0) return; d = d || 1.2; const c = AU.ctx;
     // soft purr: a warm 150 Hz triangle tone, amplitude-modulated at ~24 Hz (the purr flutter) and breathing in/out
@@ -2416,7 +2425,7 @@ function sayBubble(text, dur) { const b = $('hubBubble'); b.textContent = text; 
 function posBubble() { const p = w2s(KSEAT.x - 20, KSEAT.y - 158); const b = $('hubBubble'); b.style.left = clamp(p.x, 130, G.W - 130) + 'px'; b.style.top = Math.max(70, p.y) + 'px'; }
 
 // ---------- rendering ----------
-function officeState() { return { decor: SAVE.decor, upg: SAVE.upg, tod: G.state === 'title' ? 1 : (G.sess ? G.sess.tod : Math.min(2, SAVE.dayDone)) }; }
+function officeState() { const mid = SAVE.settings.theme === 'midnight'; return { decor: SAVE.decor, upg: SAVE.upg, mid, tod: mid ? 3 : G.state === 'title' ? 1 : (G.sess ? G.sess.tod : Math.min(2, SAVE.dayDone)) }; }
 function drawScene(c, t) {
   const st = officeState(); const D = SAVE.decor;
   drawOffice(c, t, st);
@@ -2432,6 +2441,7 @@ function drawScene(c, t) {
   drawKedim(c, KSEAT.x, KSEAT.y, { t, blink: K.blink, expr: K.expr, talk: K.talk, pose: K.pose, pk: K.pk, outfit: SAVE.outfit, fur: SAVE.fur, scale: 1 });
   if (K.soot > 0) { c.globalAlpha = Math.min(1, K.soot) * 0.75; c.fillStyle = '#2a2020'; for (const [dx, dy, r] of [[-14, -92, 9], [12, -84, 8], [2, -100, 6], [-6, -80, 5]]) { ell(c, KSEAT.x + dx, KSEAT.y + dy, r, r * 0.8); c.fill(); } c.globalAlpha = 1; }
   drawArmchair(c, CHAIR.x, CHAIR.y, t, true);
+  if (!G.finale) drawPets(c, t);
   for (const o of G.objs) if (o.st !== 'table') drawObj(c, o, t);
   if (K.emote) drawEmote(c, K.emote, KSEAT.x + 26, KSEAT.y - 150, t, 1, 1);
   drawParts(c);
@@ -2457,7 +2467,14 @@ function drawFinaleCrowd(c, t) {
 }
 function drawLighting(c, t) {
   const W = G.W, H = G.H, tod = officeState().tod;
-  if (tod >= 2) { c.fillStyle = 'rgba(40,20,80,.22)'; c.fillRect(0, 0, W, H); }
+  const os = officeState();
+  if (os.mid) { // Midnight theme: cool moonlit night with warm lamp pools
+    c.fillStyle = 'rgba(14,18,60,.34)'; c.fillRect(0, 0, W, H);
+    c.save(); c.globalCompositeOperation = 'lighter';
+    const pool = (wx, wy, r, col) => { const p = w2s(wx, wy), R = r * p.s; const g = c.createRadialGradient(p.x, p.y, 0, p.x, p.y, R); g.addColorStop(0, col); g.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = g; c.fillRect(p.x - R, p.y - R, R * 2, R * 2); };
+    pool(262, FLOORY - 150, 210, 'rgba(255,170,80,.30)'); pool(TABLE.x, TABLE.y - 70, 120, 'rgba(255,190,110,.22)'); pool(KSEAT.x, KSEAT.y - 60, 150, 'rgba(255,160,90,.14)'); pool(95, 170, 150, 'rgba(140,170,255,.16)');
+    c.restore();
+  } else if (tod >= 2) { c.fillStyle = 'rgba(40,20,80,.22)'; c.fillRect(0, 0, W, H); }
   if (QUALITY.lvl > 0) { const g = c.createRadialGradient(W / 2, H * 0.45, Math.min(W, H) * 0.35, W / 2, H * 0.45, Math.max(W, H) * 0.8); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(40,10,30,.45)'); c.fillStyle = g; c.fillRect(0, 0, W, H); }
 }
 function miniArea() {
@@ -2491,7 +2508,7 @@ function step(dt) {
   if (G.paused) { G.t += dt * 0.0; return; }
   G.t += dt;
   const k = 1 - Math.pow(0.02, dt); for (const key of ['x', 'y', 'z', 'ax', 'ay']) G.cam[key] = lerp(G.cam[key], G.camT[key], k);
-  updateKedim(dt); updateObjs(dt); updateParts(dt);
+  updateKedim(dt); updatePets(dt); updateObjs(dt); updateParts(dt);
   if (G.bubbleT > 0) { G.bubbleT -= dt; posBubble(); if (G.bubbleT <= 0) $('hubBubble').classList.add('hidden'); }
   if (G.state === 'session' && G.sess) updateSession(dt);
   if (G.state === 'mini' && G.mini) updateMini(dt);
@@ -2508,7 +2525,7 @@ function startSession(data, opts) {
   opts = opts || {};
   const pd = data.pid ? PATIENTS[data.pid] : null;
   const S = G.sess = { data, walk: !!data.walk, daily: !!opts.daily, pid: data.pid, sp: pd ? pd.sp : data.sp, pal: data.pal || null, name: pd ? pd.name : data.name, steps: [], si: -1, line: null, choice: null, mood: 0, log: [], tod: data.walk ? 2 : Math.min(1, SAVE.dayDone), wait: 0, miniScore: null };
-  S.mood = 22 + coziness() + 5 * (SAVE.upg.tea || 0);
+  S.mood = 22 + coziness() + 5 * (SAVE.upg.tea || 0); petsGreet();
   S.pt = { x: -90, y: SEAT.y, vis: true, walking: true, expr: 'neutral', blink: false, blinkT: 1, talk: false, emote: null, emoteT: 0, fx: null, fxT: 0, squash: 0 };
   S.steps.push({ t: 'enter' });
   data.i.forEach(l => S.steps.push(parseLine(l)));
@@ -2609,7 +2626,7 @@ function choose(i) {
   if (o.score === 2) { SFX.good(); P.emote = 'heart'; spawn('heart', hx, hy + 30, 6, { a: -Math.PI / 2, sp: 90, life: 1.3 }); kedimExpr('happy', 2); vibrate(15); }
   else if (o.score === 1) { SFX.ok(); P.emote = pick(['music', 'sparkle']); spawn('spark', hx, hy + 30, 4, { sp: 60, col: '#fff7c0', life: 0.9 }); }
   else { SFX.trombone(); P.emote = pick(['!', 'sweat', '?']); kedimExpr('shock', 2); vibrate([20, 40, 20]); }
-  P.emoteT = 1.6; P.squash = 1;
+  P.emoteT = 1.6; P.squash = 1; petsReact(o.score);
   updateMoodUI(); checkAch();
   const parts = o.react.split('|');
   const st = { t: 'react', who: 'p', expr: parts[0], text: parts.slice(1).join('|'), fx: o.fx };
@@ -2671,6 +2688,7 @@ function onDown(e) {
   if (G.state === 'mini' && G.mini && !G.paused) { const A = miniArea(); G.mini.down((p.x - A.x) / A.w, (p.y - A.y) / A.h); G.ptrDown = true; return; }
   const w = s2w(p.x, p.y);
   if (G.state === 'hub' || G.state === 'session' || G.state === 'title') {
+    if (tapPet(w)) return;
     if (Math.abs(w.x - KSEAT.x) < 48 && w.y > KSEAT.y - 135 && w.y < KSEAT.y) { petKedim(); return; }
     for (const o of G.objs) if (o.st === 'table' && Math.abs(w.x - o.x) < 11 && w.y > o.y - 28 && w.y < o.y + 6) { if (G.kedim.pose === 'write' || G.kedim.pose === 'nap') { G.kedim.pose = 'write'; knockObj(o); } return; }
     if (G.state === 'hub' && SAVE.decor.aqua && Math.abs(w.x - 200) < 44 && w.y > FLOORY - 120 && w.y < FLOORY - 52) { spawn('bubble', w.x, w.y, 8, { a: -Math.PI / 2, sp: 60, life: 1.2, s: 1.4 }); SFX.splash(); return; }
@@ -2680,6 +2698,125 @@ function onDown(e) {
 function onMove(e) { if (G.state === 'mini' && G.mini && G.ptrDown && !G.paused) { const p = canvasPt(e), A = miniArea(); G.mini.move((p.x - A.x) / A.w, (p.y - A.y) / A.h); } }
 function onUp(e) { if (G.state === 'mini' && G.mini) { const p = canvasPt(e), A = miniArea(); G.mini.up((p.x - A.x) / A.w, (p.y - A.y) / A.h); } G.ptrDown = false; }
 cv.addEventListener('pointerdown', onDown); window.addEventListener('pointermove', onMove); window.addEventListener('pointerup', onUp); window.addEventListener('pointercancel', onUp);
+// ================= office pets: Ducky (duck) + Pepper (black cat) =================
+const PET_DEFS = {
+  duck: { name: 'Ducky', set: 'petDuck', minX: 70, maxX: 200, y: 556, speed: 34, hitW: 20, hitH: 34 },
+  cat: { name: 'Pepper', set: 'petCat', minX: 240, maxX: 340, y: 552, speed: 44, hitW: 24, hitH: 58 },
+};
+const PET_TAP_LINES = { duck: ['Quack! (Ducky approves.)', 'Ducky did a little dance.', 'Quack quack! Emotional support duck on duty.'], cat: ['Pepper blinks slowly. That means "I love you."', 'Mrrow. Pepper allows ONE pet.', 'Pepper purrs like a tiny engine.'] };
+G.pets = {
+  duck: { x: 95, y: 556, tx: 95, dir: 1, mode: 'idle', modeT: 2, hop: 0, vy: 0, flap: 0, quack: 0, blink: false, blinkT: 2, emote: null, emoteT: 0, sq: 0 },
+  cat: { x: 335, y: 552, tx: 335, dir: -1, mode: 'idle', modeT: 3, hop: 0, vy: 0, pose: 'write', pk: 0, expr: 'unimpressed', blink: false, blinkT: 3, emote: null, emoteT: 0, sq: 0 },
+};
+function petOn(id) { return !!SAVE.settings[PET_DEFS[id].set]; }
+function petList() { return ['duck', 'cat'].filter(petOn); }
+function petJump(p, v) { if (p.hop <= 0.01) { p.vy = v || 150; p.hop = 0.02; } }
+function petEmote(p, e, d) { p.emote = e; p.emoteT = d || 1.4; }
+function updatePets(dt) {
+  if (!['title', 'hub', 'session', 'shop', 'mini'].includes(G.state)) return;
+  for (const id of petList()) {
+    const p = G.pets[id], D = PET_DEFS[id];
+    // gravity hop
+    if (p.hop > 0) { p.hop += p.vy * dt; p.vy -= 520 * dt; if (p.hop <= 0) { p.hop = 0; p.vy = 0; p.sq = 1; } }
+    p.sq = Math.max(0, p.sq - dt * 4);
+    p.blinkT -= dt; if (p.blinkT <= 0) { p.blink = !p.blink; p.blinkT = p.blink ? 0.12 : rnd(2, 5); }
+    if (p.emoteT > 0) { p.emoteT -= dt; if (p.emoteT <= 0) p.emote = null; }
+    p.quack = Math.max(0, (p.quack || 0) - dt); p.flap = Math.max(0, (p.flap || 0) - dt);
+    if (id === 'cat') { p.pk = clamp(p.pk + dt / 0.8, 0, 1); }
+    p.modeT -= dt;
+    if (p.mode === 'walk') {
+      const d = p.tx - p.x; p.dir = d < 0 ? -1 : 1;
+      const st = D.speed * dt; if (Math.abs(d) <= st) { p.x = p.tx; p.mode = 'idle'; p.modeT = rnd(2, 5); } else p.x += Math.sign(d) * st;
+    } else if (p.modeT <= 0) {
+      const r = Math.random();
+      if (id === 'cat') p.pose = 'write';
+      if (r < 0.5) { p.mode = 'walk'; p.tx = rnd(D.minX, D.maxX); if (Math.abs(p.tx - p.x) < 25) p.tx = clamp(p.x + (p.x > (D.minX + D.maxX) / 2 ? -60 : 60), D.minX, D.maxX); }
+      else if (id === 'duck') {
+        p.mode = 'idle'; p.modeT = rnd(2.5, 5);
+        if (r < 0.7) { p.flap = 0.8; } else if (r < 0.85) { p.dir = -p.dir; } else { p.quack = 0.3; if (G.state !== 'mini') SFX.quack(1.1, 0.5); }
+      } else {
+        p.mode = 'idle';
+        if (r < 0.68) { p.pose = 'nap'; p.modeT = rnd(5, 9); petEmote(p, 'zzz', p.modeT); }
+        else if (r < 0.84) { p.pose = 'stretch'; p.pk = 0; p.modeT = 1.6; }
+        else { p.dir = -p.dir; p.modeT = rnd(2, 4); }
+      }
+    }
+  }
+}
+function drawDuck(c, x, y, o) {
+  const t = o.t || 0; c.save(); c.translate(x, y); c.lineJoin = 'round'; c.lineCap = 'round';
+  shadowEll(c, 0, 1, 15 - (o.hop || 0) * 0.05, 3.5, 0.2);
+  c.translate(0, -(o.hop || 0)); const sq = o.sq || 0; c.scale((o.dir < 0 ? -1 : 1) * (1 + sq * 0.12), 1 - sq * 0.12);
+  const wk = o.walk ? Math.sin(t * 14) : 0;
+  // feet
+  c.fillStyle = '#ff9a2a'; c.strokeStyle = '#b3561a'; c.lineWidth = 1.5;
+  for (const [fx, ph] of [[-4, 1], [5, -1]]) { const lift = Math.max(0, wk * ph) * 3; ell(c, fx + 2, -1.5 - lift, 5, 2.4); c.fill(); c.stroke(); }
+  c.rotate(wk * 0.08);
+  // tail
+  c.beginPath(); c.moveTo(-12, -14); c.lineTo(-20, -20); c.lineTo(-13, -8); c.closePath(); fillStroke(c, '#f5bf2a', 2);
+  // body
+  ell(c, 0, -11, 15, 10.5); fillStroke(c, rgrad(c, -2, -14, 1, 17, ['#fff7b8', '#ffdc48', '#f2b21e'], -3, -4), 2.2);
+  // wing
+  const fl = o.flap > 0 ? Math.sin(t * 30) * 0.6 : Math.sin(t * 2) * 0.05;
+  c.save(); c.translate(1, -13); c.rotate(-0.25 - Math.max(0, fl)); ell(c, -4, 0, 9, 5.5); fillStroke(c, lgrad(c, 0, -5, 0, 6, ['#ffe066', '#efaa1a']), 1.8); c.restore();
+  // head
+  const hb = Math.sin(t * 3) * 0.8 + (o.walk ? Math.sin(t * 14) * 1.2 : 0);
+  c.save(); c.translate(8, -25 + hb);
+  ell(c, 0, 0, 9, 8.6); fillStroke(c, rgrad(c, -2, -3, 1, 11, ['#fff9c8', '#ffde4e', '#f4b622'], -2, -3), 2.2);
+  c.strokeStyle = '#3a2630'; c.lineWidth = 1.6; c.beginPath(); c.moveTo(-1, -8); c.quadraticCurveTo(1, -13, 4, -11); c.stroke();
+  // beak
+  const qo = o.quack > 0 ? 2.6 : 0;
+  c.fillStyle = '#ff8a1e'; c.strokeStyle = '#b3561a'; c.lineWidth = 1.4;
+  c.beginPath(); c.moveTo(6, -1.5); c.quadraticCurveTo(15, -2.5 - qo * 0.4, 16, 0.5 - qo * 0.3); c.lineTo(7, 1.2); c.closePath(); c.fill(); c.stroke();
+  c.beginPath(); c.moveTo(7, 1.6); c.quadraticCurveTo(14, 2 + qo, 15, 1.2 + qo); c.lineTo(6.5, 3.6); c.closePath(); c.fill(); c.stroke();
+  // eye + blush
+  if (o.blink) { c.strokeStyle = '#3a2630'; c.lineWidth = 1.6; c.beginPath(); c.moveTo(1, -2.5); c.lineTo(5, -2.5); c.stroke(); }
+  else { c.fillStyle = '#2a1e24'; ell(c, 3, -2.5, 2, 2.4); c.fill(); c.fillStyle = '#fff'; ell(c, 3.7, -3.4, 0.8, 0.8); c.fill(); }
+  c.fillStyle = 'rgba(255,120,140,.5)'; ell(c, 2, 3, 2.6, 1.6); c.fill();
+  c.restore(); c.restore();
+}
+function drawPets(c, t) {
+  for (const id of petList()) {
+    const p = G.pets[id];
+    if (id === 'duck') { c.save(); c.translate(p.x, p.y); c.scale(1.15, 1.15); drawDuck(c, 0, 0, { t, dir: p.dir, walk: p.mode === 'walk', flap: p.flap, quack: p.quack, blink: p.blink, hop: p.hop, sq: p.sq }); c.restore(); if (p.emote) drawEmote(c, p.emote, p.x + 6, p.y - 44 - p.hop, t, clamp(p.emoteT * 2, 0, 1), 0.6); }
+    else {
+      const walk = p.mode === 'walk', bob = walk ? Math.abs(Math.sin(t * 10)) * 3 : 0;
+      shadowEll(c, p.x, p.y + 1, 15, 3.5, 0.22);
+      c.save(); c.translate(p.x, p.y - p.hop - bob); c.scale(1 + p.sq * 0.1, 1 - p.sq * 0.1);
+      drawKedim(c, 0, 0, { t: t + 3, skin: PET_CAT_SKIN, noPad: true, outfit: {}, scale: 0.4, flip: p.dir < 0, pose: walk ? 'write' : p.pose, pk: p.pk, expr: p.expr, blink: p.blink });
+      c.restore();
+      if (p.emote) drawEmote(c, p.emote, p.x + 10, p.y - 62 - p.hop, t, clamp(p.emoteT * 2, 0, 1), 0.6);
+    }
+  }
+}
+function tapPet(w) {
+  for (const id of petList()) {
+    const p = G.pets[id], D = PET_DEFS[id];
+    if (Math.abs(w.x - p.x) < D.hitW && w.y > p.y - D.hitH - p.hop && w.y < p.y + 8) {
+      if (id === 'duck') { SFX.quack(1 + Math.random() * 0.15); p.quack = 0.35; p.flap = 0.9; petJump(p, 170); petEmote(p, 'music', 1.3); spawn('spark', p.x, p.y - 30, 6, { sp: 60, cols: ['#fff3a0', '#ffd34a'], life: 0.8 }); }
+      else { if (p.pose === 'nap') { p.pose = 'write'; p.emote = '!'; p.emoteT = 1; SFX.meow(1.3); petJump(p, 120); } else { p.pose = 'purr'; p.pk = 0; p.mode = 'idle'; p.modeT = 1.5; SFX.purr(0.9); SFX.meow(1.35); petEmote(p, 'heart', 1.3); spawn('heart', p.x, p.y - 50, 3, { a: -Math.PI / 2, sp: 60, life: 1.1 }); } p.expr = 'happy'; setTimeout(() => { p.expr = 'unimpressed'; }, 1600); }
+      vibrate(10);
+      // small daily bonus: each pet finds 5 coins on your first pat of the day
+      const today = todayStr(); SAVE.petGift = SAVE.petGift || {};
+      if (SAVE.petGift[id] !== today) { SAVE.petGift[id] = today; SAVE.coins += 5; SAVE.totalCoins += 5; floatText('+5 coins', p.x, p.y - 70, '#ffe28a'); SFX.coin && SFX.coin(); saveGame(); if (typeof refreshHub === 'function' && G.state === 'hub') refreshHub(); if (G.state === 'hub') sayBubble(D.name + ' found 5 coins under the couch!', 2.5); }
+      else if (G.state === 'hub') sayBubble(pick(PET_TAP_LINES[id]), 2.4);
+      return true;
+    }
+  }
+  return false;
+}
+// patients react to answers: pets cheer on great answers, startle on bad ones, and may comfort the patient a little
+function petsReact(score) {
+  const L = petList(); if (!L.length) return 0;
+  for (const id of L) { const p = G.pets[id]; if (id === 'cat') p.pose = 'write';
+    if (score === 2) { petJump(p, 140); petEmote(p, 'heart', 1.2); if (id === 'duck') { p.flap = 0.7; p.quack = 0.3; } }
+    else if (score === 0) { petJump(p, 190); petEmote(p, '!', 1); } }
+  if (score === 2 && Math.random() < 0.5) { if (L.includes('duck')) SFX.quack(1.2, 0.55); else SFX.meow(1.4); }
+  if (score === 0 && Math.random() < 0.35) { const id = pick(L), p = G.pets[id]; setTimeout(() => { petEmote(p, 'heart', 1.4); if (G.sess) { G.sess.mood = clamp(G.sess.mood + 3, 0, 100); updateMoodUI(); floatText(PET_DEFS[id].name + ' comforts them: +3', p.x, p.y - 80, '#9affc8'); id === 'duck' ? SFX.quack(1.15, 0.6) : SFX.purr(0.8); } }, 900); }
+  return 0;
+}
+// a patient walking in: pets look over
+function petsGreet() { for (const id of petList()) { const p = G.pets[id]; p.dir = p.x > 140 ? -1 : 1; if (id === 'cat' && p.pose === 'nap') { p.pose = 'write'; p.emote = null; } petEmote(p, '?', 1.1); } }
 // ================= UI: screens, flow, shop, notebook, achievements =================
 function show(id) { for (const s of document.querySelectorAll('.screen')) { if (s.id === id) { s.classList.remove('hidden'); s.classList.remove('show'); void s.offsetWidth; s.classList.add('show'); } else if (s.id !== 'sModal') s.classList.add('hidden'); } }
 function hideScreen(id) { $(id).classList.add('hidden'); }
