@@ -388,7 +388,7 @@ body.land .cho .ic{width:32px;height:32px}
       <div class="set">Text speed<div class="seg" data-seg="speed"><button data-v="0">Slow</button><button data-v="1">Normal</button><button data-v="2">Fast</button><button data-v="3">Instant</button></div></div>
       <div class="set">Office theme<div class="seg" data-seg="theme"><button data-v="day">Day</button><button data-v="midnight">Midnight</button></div></div>
       <div class="set">🦆 Pet: Ducky<div class="tog" data-set="petDuck"></div></div>
-      <div class="set">🐈‍⬛ Pet: Sher the cat<div class="tog" data-set="petCat"></div></div>
+      <div class="set">🐈‍⬛ Pet: Mei Mei the cat<div class="tog" data-set="petCat"></div></div>
       <div class="set">Graphics<div class="seg" data-seg="gfx"><button data-v="auto">Auto</button><button data-v="high">High</button><button data-v="low">Low</button></div></div>
       <div class="set">Progress<button class="btn pink sm" id="bReset" style="width:auto">Reset</button></div>
     </div>
@@ -2698,12 +2698,12 @@ function onDown(e) {
 function onMove(e) { if (G.state === 'mini' && G.mini && G.ptrDown && !G.paused) { const p = canvasPt(e), A = miniArea(); G.mini.move((p.x - A.x) / A.w, (p.y - A.y) / A.h); } }
 function onUp(e) { if (G.state === 'mini' && G.mini) { const p = canvasPt(e), A = miniArea(); G.mini.up((p.x - A.x) / A.w, (p.y - A.y) / A.h); } G.ptrDown = false; }
 cv.addEventListener('pointerdown', onDown); window.addEventListener('pointermove', onMove); window.addEventListener('pointerup', onUp); window.addEventListener('pointercancel', onUp);
-// ================= office pets: Ducky (duck) + Sher (black cat) =================
+// ================= office pets: Ducky (duck) + Mei Mei (black cat) =================
 const PET_DEFS = {
   duck: { name: 'Ducky', set: 'petDuck', minX: 70, maxX: 200, y: 556, speed: 34, hitW: 20, hitH: 34 },
-  cat: { name: 'Sher', set: 'petCat', minX: 240, maxX: 340, y: 552, speed: 44, hitW: 24, hitH: 58 },
+  cat: { name: 'Mei Mei', set: 'petCat', minX: 240, maxX: 340, y: 552, speed: 44, hitW: 24, hitH: 58 },
 };
-const PET_TAP_LINES = { duck: ['Quack! (Ducky approves.)', 'Ducky did a little dance.', 'Quack quack! Emotional support duck on duty.'], cat: ['Sher blinks slowly. That means "I love you."', 'Mrrow. Sher allows ONE pet.', 'Sher purrs like a tiny engine. She is very pleased with you.'] };
+const PET_TAP_LINES = { duck: ['Quack! (Ducky approves.)', 'Ducky did a little dance.', 'Quack quack! Emotional support duck on duty.'], cat: ['Mei Mei blinks slowly. That means "I love you."', 'Mrrow. Mei Mei allows ONE pet.', 'Mei Mei purrs like a tiny engine. She is very pleased with you.'] };
 G.pets = {
   duck: { x: 95, y: 556, tx: 95, dir: 1, mode: 'idle', modeT: 2, hop: 0, vy: 0, flap: 0, quack: 0, blink: false, blinkT: 2, emote: null, emoteT: 0, sq: 0 },
   cat: { x: 335, y: 552, tx: 335, dir: -1, mode: 'idle', modeT: 3, hop: 0, vy: 0, pose: 'write', pk: 0, expr: 'unimpressed', blink: false, blinkT: 3, emote: null, emoteT: 0, sq: 0 },
