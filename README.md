@@ -14,7 +14,7 @@ You play as **Dr. Kedim**, a ginger tabby cat therapist with a red scarf, a dry 
 - **7 therapy mini-games**: Breathe With Me, Untangle Thoughts (yarn), Feelings Match, Worry Jar, Ink Blot Test, Purr Therapy and Whack-a-Thought.
 - **Coins and star reviews**, plus a day/week appointment calendar.
 - **Shop**: 30 office decorations that appear in the office, 21 Kedim outfits, 9 fur colours, and 5 upgrades (tea, blanket, white noise, treats, nap pillow).
-- **Office pets**: Ducky the duck and Pepper the black cat wander the office, react to patients and taps, and help out with small bonuses (toggle them in Settings).
+- **Office pets**: Ducky the duck and Sher the black cat (she loves a good pat) wander the office, react to patients and taps, and help out with small bonuses (toggle them in Settings).
 - **Midnight office theme**: a moonlit night office with warm lamp glow and stars (Settings).
 - **Kedim's Notebook**: patient files with session notes and reviews.
 - **26 achievements**.
