@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://zaibgames.com/kedim-therapist/screenshot.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M10 30 14 6l14 12h8l14-12 4 24c0 16-10 26-22 26S10 46 10 30z' fill='%23ff9d3c' stroke='%233a2630' stroke-width='4' stroke-linejoin='round'/%3E%3Ccircle cx='23' cy='32' r='7' fill='none' stroke='%233a2630' stroke-width='3'/%3E%3Ccircle cx='41' cy='32' r='7' fill='none' stroke='%233a2630' stroke-width='3'/%3E%3Cpath d='M29 42h6l-3 3z' fill='%23ff7a95'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M10 30 14 6l14 12h8l14-12 4 24c0 16-10 26-22 26S10 46 10 30z' fill='%232b2e3b' stroke='%239fb4dc' stroke-width='4' stroke-linejoin='round'/%3E%3Cpath d='M17 26 17 15l7 7zM47 26l0-11-7 7z' fill='%23ffb3c1'/%3E%3Ccircle cx='23' cy='32' r='6' fill='%23c6ef3e'/%3E%3Ccircle cx='41' cy='32' r='6' fill='%23c6ef3e'/%3E%3Ccircle cx='23' cy='32' r='2.5' fill='%2314151c'/%3E%3Ccircle cx='41' cy='32' r='2.5' fill='%2314151c'/%3E%3Cpath d='M29 42h6l-3 3z' fill='%23ff7a95'/%3E%3C/svg%3E">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#3a2340;color:#4a2a1a;font-family:"Trebuchet MS",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;overscroll-behavior:none;-webkit-text-size-adjust:100%;touch-action:none}
@@ -541,7 +541,7 @@ function face(c, x, y, s, o) {
   for (const sd of [-1, 1]) {
     const cx = sd * es;
     if (ex === 'happy' || ex === 'cry' || ex === 'sleepy' || (ex === 'purr')) {
-      c.strokeStyle = OUT; c.lineWidth = Math.max(2, s * 0.06); c.beginPath();
+      c.strokeStyle = o.line || OUT; c.lineWidth = Math.max(2, s * 0.06); c.beginPath();
       if (ex === 'happy' || ex === 'purr') c.arc(cx, er * 0.35, er * 0.8, Math.PI * 1.15, Math.PI * 1.85); else c.arc(cx, -er * 0.2, er * 0.75, Math.PI * 0.15, Math.PI * 0.85);
       c.stroke();
     } else if (ex === 'love') {
@@ -558,7 +558,7 @@ function face(c, x, y, s, o) {
       if (ex === 'smug' || ex === 'unimpressed') { c.fillStyle = o.lid || '#d9a070'; c.beginPath(); c.ellipse(cx, 0, er * 1.08, er * 1.28, 0, Math.PI, 0); c.lineTo(cx + er * 1.08, -er * 0.05); c.closePath(); c.fill(); c.strokeStyle = OUT; c.lineWidth = Math.max(1.5, s * 0.04); c.beginPath(); c.moveTo(cx - er * 1.05, -er * 0.05); c.lineTo(cx + er * 1.05, -er * 0.05); c.stroke(); }
     }
     // brows
-    c.strokeStyle = OUT; c.lineWidth = Math.max(2, s * 0.055);
+    c.strokeStyle = o.line || OUT; c.lineWidth = Math.max(2, s * 0.055);
     if (ex === 'angry') { c.beginPath(); c.moveTo(cx - sd * er * 1.1, -er * 1.25); c.lineTo(cx + sd * er * 0.9, -er * 1.95); c.stroke(); }
     else if (ex === 'sad' || ex === 'worried' || ex === 'cry') { c.beginPath(); c.moveTo(cx - sd * er * 1.0, -er * 1.9); c.lineTo(cx + sd * er * 0.9, -er * 1.4); c.stroke(); }
     else if (ex === 'shock') { c.beginPath(); c.arc(cx, -er * 1.4, er * 0.9, Math.PI * 1.2, Math.PI * 1.8); c.stroke(); }
@@ -611,9 +611,9 @@ function drawEmote(c, type, x, y, t, a, s) {
 }
 
 // ---------- Kedim the therapist cat ----------
-// echoes Kedimz Adventure hero: ginger tabby, cream belly/muzzle, red scarf, pink-lined ears, big shiny brown eyes.
+// Kedim: glossy black cat with blue-grey rim light, yellow-green eyes, pink nose/inner ears, red scarf.
 const FURS = [
-  { id: 'ginger', name: 'Ginger', price: 0, fur: '#ff9d3c', fur2: '#e2711d', belly: '#fff1dc', stripe: '#d0601a' },
+  { id: 'ginger', name: 'Classic Black', price: 0, fur: '#2b2e3b', fur2: '#14151c', belly: '#3a3f52', stripe: '#1d1f2a', eye: '#c6ef3e', black: true, rim: '#9fb4dc', ol: '#56648a', line: '#c3d0ea' },
   { id: 'midnight', name: 'Midnight', price: 300, fur: '#4a4462', fur2: '#2c2840', belly: '#77709a', stripe: '#211d33', eye: '#ffe14a' },
   { id: 'snow', name: 'Snowball', price: 400, fur: '#f7f7fb', fur2: '#d4d6e4', belly: '#ffffff', stripe: '#c4c8de' },
   { id: 'grey', name: 'Grey Tabby', price: 400, fur: '#a3aab6', fur2: '#737a87', belly: '#eceef2', stripe: '#5d6370' },
@@ -626,6 +626,8 @@ const FURS = [
 // o: {t, blink, expr, talk, pose:'write'|'nap'|'paw'|'purr'|'wave'|'stretch', pk (pose progress 0..1), outfit, fur, scale, noPad}
 function drawKedim(c, x, y, o) {
   const sk = FURS.find(f => f.id === o.fur) || FURS[0], of = o.outfit || {}, t = o.t || 0, pose = o.pose || 'write', pk = o.pk || 0;
+  const ol = sk.ol || OUT, ln = sk.line || OUT;
+  const rimE = (cx, cy, rx, ry) => { if (!sk.rim) return; c.save(); c.strokeStyle = sk.rim; c.globalAlpha = 0.85; c.lineWidth = 2.2; c.beginPath(); c.ellipse(cx, cy, rx - 3, ry - 3, 0, Math.PI * 1.02, Math.PI * 1.55); c.stroke(); c.globalAlpha = 0.45; c.lineWidth = 1.6; c.beginPath(); c.ellipse(cx, cy, rx - 3, ry - 3, 0, Math.PI * 1.75, Math.PI * 1.98); c.stroke(); c.restore(); };
   c.save(); c.translate(x, y); const sc = o.scale || 1; c.scale(sc * (o.flip ? -1 : 1), sc); c.lineJoin = 'round'; c.lineCap = 'round';
   const breathe = pose === 'nap' ? Math.sin(t * 1.6) * 2 : Math.sin(t * 2.2) * 1.1;
   const purrShake = pose === 'purr' ? Math.sin(t * 60) * 0.8 : 0;
@@ -633,16 +635,17 @@ function drawKedim(c, x, y, o) {
   // tail
   const tw = Math.sin(t * (pose === 'nap' ? 0.8 : 2.2)) * 0.3;
   c.save(); c.translate(26, -14); c.rotate(0.2 + tw);
-  c.strokeStyle = OUT; c.lineWidth = 15; c.beginPath(); c.moveTo(0, 0); c.bezierCurveTo(22, 4, 30, -18, 22, -38); c.stroke();
+  c.strokeStyle = ol; c.lineWidth = 15; c.beginPath(); c.moveTo(0, 0); c.bezierCurveTo(22, 4, 30, -18, 22, -38); c.stroke();
   c.strokeStyle = sk.fur; c.lineWidth = 10; c.stroke();
-  c.strokeStyle = sk.stripe; c.lineWidth = 10; c.setLineDash([5, 8]); c.stroke(); c.setLineDash([]);
+  if (!sk.black) { c.strokeStyle = sk.stripe; c.lineWidth = 10; c.setLineDash([5, 8]); c.stroke(); c.setLineDash([]); }
+  if (sk.rim) { c.save(); c.translate(-2.5, -1); c.strokeStyle = sk.rim; c.globalAlpha = 0.6; c.lineWidth = 2; c.beginPath(); c.moveTo(4, -1); c.bezierCurveTo(22, 2, 28, -18, 20, -36); c.stroke(); c.restore(); }
   c.restore();
   // body
   c.save(); c.translate(0, -breathe * 0.4);
-  ell(c, 0, -38, 36, 40 + breathe * 0.3); fillStroke(c, lgrad(c, -30, -80, 20, 0, [shade(sk.fur, 0.15), sk.fur, sk.fur2]), 3);
+  ell(c, 0, -38, 36, 40 + breathe * 0.3); fillStroke(c, lgrad(c, -30, -80, 20, 0, [shade(sk.fur, 0.15), sk.fur, sk.fur2]), 3, ol); rimE(0, -38, 36, 40);
   if (sk.galaxy) { c.save(); ell(c, 0, -38, 35, 39); c.clip(); for (let i = 0; i < 12; i++) { c.fillStyle = i % 2 ? '#fff' : '#9ff'; c.globalAlpha = 0.4 + 0.5 * Math.sin(t * 3 + i * 2); c.fillRect(-28 + ((i * 17) % 56), -74 + ((i * 23) % 70), 2, 2); } c.restore(); c.globalAlpha = 1; }
   if (sk.patch) { c.save(); ell(c, 0, -38, 35, 39); c.clip(); c.fillStyle = sk.patch; ell(c, -24, -50, 16, 20, 0.3); c.fill(); c.fillStyle = sk.stripe; ell(c, 26, -22, 14, 16); c.fill(); c.restore(); }
-  else { c.strokeStyle = sk.stripe; c.lineWidth = 4; for (const k of [-1, 1]) for (let i = 0; i < 3; i++) { c.beginPath(); c.moveTo(k * 34, -52 + i * 13); c.quadraticCurveTo(k * 26, -49 + i * 13, k * 24, -44 + i * 13); c.stroke(); } }
+  else if (!sk.black) { c.strokeStyle = sk.stripe; c.lineWidth = 4; for (const k of [-1, 1]) for (let i = 0; i < 3; i++) { c.beginPath(); c.moveTo(k * 34, -52 + i * 13); c.quadraticCurveTo(k * 26, -49 + i * 13, k * 24, -44 + i * 13); c.stroke(); } }
   ell(c, 0, -32, 21, 28); c.fillStyle = sk.belly; c.fill();
   // body clothing
   if (of.body === 'cardigan' || of.body === 'labcoat' || of.body === 'vest' || of.body === 'turtle' || of.body === 'hoodie') {
@@ -651,10 +654,10 @@ function drawKedim(c, x, y, o) {
     if (of.body === 'turtle' || of.body === 'hoodie') { c.fillStyle = lgrad(c, 0, -80, 0, 0, colr); c.fillRect(-40, -80, 80, 80); if (of.body === 'hoodie') { c.fillStyle = 'rgba(0,0,0,.15)'; rr(c, -14, -26, 28, 14, 5); c.fill(); c.strokeStyle = '#fff'; c.lineWidth = 2; c.beginPath(); c.moveTo(-6, -72); c.lineTo(-7, -56); c.moveTo(6, -72); c.lineTo(7, -56); c.stroke(); } }
     else if (of.body === 'vest') { c.fillStyle = lgrad(c, 0, -80, 0, 0, colr); c.beginPath(); c.moveTo(-40, -80); c.lineTo(-6, -80); c.lineTo(0, -55); c.lineTo(6, -80); c.lineTo(40, -80); c.lineTo(40, 0); c.lineTo(-40, 0); c.closePath(); c.fill(); c.strokeStyle = '#ffd34a'; c.lineWidth = 1.5; for (let i = -3; i <= 3; i++) { c.beginPath(); c.moveTo(i * 10 - 10, -50); c.lineTo(i * 10 + 10, -10); c.moveTo(i * 10 + 10, -50); c.lineTo(i * 10 - 10, -10); c.stroke(); } }
     else { c.fillStyle = lgrad(c, 0, -80, 0, 0, colr); c.fillRect(-40, -80, 26, 80); c.fillRect(14, -80, 26, 80); c.strokeStyle = 'rgba(0,0,0,.25)'; c.lineWidth = 2; c.beginPath(); c.moveTo(-14, -80); c.lineTo(-10, 0); c.moveTo(14, -80); c.lineTo(10, 0); c.stroke(); if (of.body === 'cardigan') { c.fillStyle = '#ffe9a8'; for (let i = 0; i < 3; i++) { ell(c, -17, -58 + i * 16, 2.6, 2.6); c.fill(); } } else { c.fillStyle = '#7fb8ff'; rr(c, 18, -44, 12, 4, 2); c.fill(); c.fillStyle = '#ff6b6b'; c.fillRect(22, -50, 2, 7); } }
-    c.restore(); ell(c, 0, -38, 36, 40); c.strokeStyle = OUT; c.lineWidth = 3; c.stroke();
+    c.restore(); ell(c, 0, -38, 36, 40); c.strokeStyle = ol; c.lineWidth = 3; c.stroke();
   }
   // feet
-  for (const fx of [-17, 17]) { ell(c, fx, -3, 13, 8); fillStroke(c, sk.fur, 2.5); c.strokeStyle = OUT; c.lineWidth = 1.5; c.beginPath(); c.moveTo(fx - 3, -6); c.lineTo(fx - 3, -1); c.moveTo(fx + 3, -6); c.lineTo(fx + 3, -1); c.stroke(); }
+  for (const fx of [-17, 17]) { ell(c, fx, -3, 13, 8); fillStroke(c, sk.fur, 2.5, ol); c.strokeStyle = ol; c.lineWidth = 1.5; c.beginPath(); c.moveTo(fx - 3, -6); c.lineTo(fx - 3, -1); c.moveTo(fx + 3, -6); c.lineTo(fx + 3, -1); c.stroke(); }
   // notepad + arms
   const write = pose === 'write' ? Math.sin(t * 9) * 2 : 0;
   if (!o.noPad && pose !== 'nap' && pose !== 'stretch') {
@@ -665,25 +668,25 @@ function drawKedim(c, x, y, o) {
     c.fillStyle = '#c9c9d4'; rr(c, -6, -23, 12, 6, 2); fillStroke(c, '#c9c9d4', 1.5);
     c.restore();
     // left paw holding pad
-    ell(c, -26, -30, 9, 8); fillStroke(c, sk.fur, 2.5);
+    ell(c, -26, -30, 9, 8); fillStroke(c, sk.fur, 2.5, ol);
   }
   if (pose === 'paw') { // reaching to knock stuff off (towards -x = left side table... side table is to the left of Kedim)
     const ext = Math.sin(pk * Math.PI);
     c.save(); c.translate(-20, -50); c.rotate(-0.4 - ext * 0.9);
-    c.strokeStyle = OUT; c.lineWidth = 15; c.beginPath(); c.moveTo(0, 0); c.lineTo(-24 - ext * 18, 0); c.stroke(); c.strokeStyle = sk.fur; c.lineWidth = 10; c.stroke();
-    ell(c, -26 - ext * 18, 0, 8, 7); fillStroke(c, sk.fur, 2.5); c.restore();
+    c.strokeStyle = ol; c.lineWidth = 15; c.beginPath(); c.moveTo(0, 0); c.lineTo(-24 - ext * 18, 0); c.stroke(); c.strokeStyle = sk.fur; c.lineWidth = 10; c.stroke();
+    ell(c, -26 - ext * 18, 0, 8, 7); fillStroke(c, sk.fur, 2.5, ol); c.restore();
   } else if (pose === 'wave') {
     const w = Math.sin(t * 10) * 0.4;
-    c.save(); c.translate(22, -56); c.rotate(-1.9 + w); c.strokeStyle = OUT; c.lineWidth = 15; c.beginPath(); c.moveTo(0, 0); c.lineTo(28, 0); c.stroke(); c.strokeStyle = sk.fur; c.lineWidth = 10; c.stroke(); ell(c, 30, 0, 9, 8); fillStroke(c, sk.fur, 2.5); c.fillStyle = '#ffb3c1'; ell(c, 31, 0, 4, 3.5); c.fill(); c.restore();
+    c.save(); c.translate(22, -56); c.rotate(-1.9 + w); c.strokeStyle = ol; c.lineWidth = 15; c.beginPath(); c.moveTo(0, 0); c.lineTo(28, 0); c.stroke(); c.strokeStyle = sk.fur; c.lineWidth = 10; c.stroke(); ell(c, 30, 0, 9, 8); fillStroke(c, sk.fur, 2.5, ol); c.fillStyle = '#ffb3c1'; ell(c, 31, 0, 4, 3.5); c.fill(); c.restore();
   } else if (pose === 'stretch') {
-    for (const sd of [-1, 1]) { c.save(); c.translate(sd * 22, -60); c.rotate(sd * (-2.4 + pk * 0.3)); c.strokeStyle = OUT; c.lineWidth = 15; c.beginPath(); c.moveTo(0, 0); c.lineTo(32, 0); c.stroke(); c.strokeStyle = sk.fur; c.lineWidth = 10; c.stroke(); ell(c, 34, 0, 9, 8); fillStroke(c, sk.fur, 2.5); c.restore(); }
+    for (const sd of [-1, 1]) { c.save(); c.translate(sd * 22, -60); c.rotate(sd * (-2.4 + pk * 0.3)); c.strokeStyle = ol; c.lineWidth = 15; c.beginPath(); c.moveTo(0, 0); c.lineTo(32, 0); c.stroke(); c.strokeStyle = sk.fur; c.lineWidth = 10; c.stroke(); ell(c, 34, 0, 9, 8); fillStroke(c, sk.fur, 2.5, ol); c.restore(); }
   }
   if (!o.noPad && pose !== 'nap' && pose !== 'stretch' && pose !== 'wave') {
     // right paw with pen
     c.save(); c.translate(6 + write * 0.5, -38 + write * 0.3);
     c.strokeStyle = '#3a5ad9'; c.lineWidth = 3.5; c.beginPath(); c.moveTo(-4, 2); c.lineTo(-14, 14); c.stroke(); c.strokeStyle = '#ffd34a'; c.lineWidth = 3.5; c.beginPath(); c.moveTo(-1, -2); c.lineTo(-4, 2); c.stroke();
-    ell(c, 0, 0, 9, 8); fillStroke(c, sk.fur, 2.5); c.restore();
-  } else if (pose === 'nap') { ell(c, -14, -26, 10, 7); fillStroke(c, sk.fur, 2.5); ell(c, 14, -26, 10, 7); fillStroke(c, sk.fur, 2.5); }
+    ell(c, 0, 0, 9, 8); fillStroke(c, sk.fur, 2.5, ol); c.restore();
+  } else if (pose === 'nap') { ell(c, -14, -26, 10, 7); fillStroke(c, sk.fur, 2.5, ol); ell(c, 14, -26, 10, 7); fillStroke(c, sk.fur, 2.5, ol); }
   // neck accessory
   const nk = of.neck || 'none';
   if (nk === 'scarf') {
@@ -701,24 +704,24 @@ function drawKedim(c, x, y, o) {
   }
   // head
   c.save(); const headTilt = pose === 'nap' ? 0.28 : pose === 'purr' ? Math.sin(t * 2) * 0.06 : Math.sin(t * 0.9) * 0.03; c.translate(0, -88); c.rotate(headTilt);
-  for (const [ex, ey, r] of [[-20, -18, -0.35], [20, -18, 0.35]]) { c.save(); c.translate(ex, ey); c.rotate(r + (pose === 'nap' ? r * 0.3 : 0)); c.beginPath(); c.moveTo(-11, 8); c.lineTo(0, -15); c.lineTo(11, 8); c.closePath(); fillStroke(c, sk.points || sk.fur, 3); c.fillStyle = '#ffb3c1'; c.beginPath(); c.moveTo(-5.5, 6); c.lineTo(0, -7); c.lineTo(5.5, 6); c.closePath(); c.fill(); c.restore(); }
-  ell(c, 0, 0, 33, 28); fillStroke(c, rgrad(c, 0, 0, 4, 36, [sk.gold ? '#fff6c8' : shade(sk.fur, 0.18), sk.fur, sk.fur2], -8, -12), 3);
+  for (const [ex, ey, r] of [[-20, -18, -0.35], [20, -18, 0.35]]) { c.save(); c.translate(ex, ey); c.rotate(r + (pose === 'nap' ? r * 0.3 : 0)); c.beginPath(); c.moveTo(-11, 8); c.lineTo(0, -15); c.lineTo(11, 8); c.closePath(); fillStroke(c, sk.points || sk.fur, 3, ol); c.fillStyle = '#ffb3c1'; c.beginPath(); c.moveTo(-5.5, 6); c.lineTo(0, -7); c.lineTo(5.5, 6); c.closePath(); c.fill(); c.restore(); }
+  ell(c, 0, 0, 33, 28); fillStroke(c, rgrad(c, 0, 0, 4, 36, [sk.gold ? '#fff6c8' : shade(sk.fur, 0.18), sk.fur, sk.fur2], -8, -12), 3, ol); rimE(0, 0, 33, 28);
   if (sk.patch) { c.save(); ell(c, 0, 0, 32, 27); c.clip(); c.fillStyle = sk.patch; ell(c, -20, -14, 15, 12, 0.4); c.fill(); c.fillStyle = sk.stripe; ell(c, 22, -16, 13, 11); c.fill(); c.restore(); }
-  else { c.strokeStyle = sk.stripe; c.lineWidth = 4; for (const sx of [-8, 0, 8]) { c.beginPath(); c.moveTo(sx, -27); c.lineTo(sx * 1.1, -17); c.stroke(); } for (const sd of [-1, 1]) { c.beginPath(); c.moveTo(sd * 33, -2); c.lineTo(sd * 25, 0); c.moveTo(sd * 32, 6); c.lineTo(sd * 25, 6); c.stroke(); } }
+  else if (!sk.black) { c.strokeStyle = sk.stripe; c.lineWidth = 4; for (const sx of [-8, 0, 8]) { c.beginPath(); c.moveTo(sx, -27); c.lineTo(sx * 1.1, -17); c.stroke(); } for (const sd of [-1, 1]) { c.beginPath(); c.moveTo(sd * 33, -2); c.lineTo(sd * 25, 0); c.moveTo(sd * 32, 6); c.lineTo(sd * 25, 6); c.stroke(); } }
   if (sk.points) { c.fillStyle = sk.points; c.globalAlpha = 0.5; ell(c, 0, 10, 16, 11); c.fill(); c.globalAlpha = 1; }
   c.fillStyle = sk.belly; ell(c, -8, 11, 10, 8); c.fill(); ell(c, 8, 11, 10, 8); c.fill();
   // eyes
   let expr = o.expr || 'unimpressed';
   if (pose === 'nap') expr = 'sleepy'; else if (pose === 'purr') expr = 'purr';
-  face(c, 0, -1, 40, { expr, blink: o.blink, talk: false, t, es: 0.36, er: 0.2, ec: sk.eye || '#5a3a1a', lid: sk.fur, noMouth: true });
+  face(c, 0, -1, 40, { expr, blink: o.blink, talk: false, t, es: 0.36, er: 0.2, ec: sk.eye || '#5a3a1a', lid: sk.fur, noMouth: true, line: sk.line });
   // nose + mouth
-  c.fillStyle = '#ff7a95'; c.beginPath(); c.moveTo(-4, 6); c.lineTo(4, 6); c.lineTo(0, 10); c.closePath(); c.fill();
-  c.strokeStyle = OUT; c.lineWidth = 2;
+  c.fillStyle = sk.black ? '#ff8fb0' : '#ff7a95'; c.beginPath(); c.moveTo(-4, 6); c.lineTo(4, 6); c.lineTo(0, 10); c.closePath(); c.fill();
+  c.strokeStyle = ln; c.lineWidth = 2;
   const tk = o.talk ? Math.abs(Math.sin(t * 15)) : 0;
   if (tk > 0.15 || expr === 'shock') { c.fillStyle = '#7a2a3a'; ell(c, 0, 15, 4.5, 2 + tk * 4); c.fill(); c.stroke(); }
   else if (expr === 'happy' || expr === 'purr') { c.beginPath(); c.moveTo(0, 10); c.quadraticCurveTo(-4, 16, -9, 12); c.moveTo(0, 10); c.quadraticCurveTo(4, 16, 9, 12); c.stroke(); }
   else { c.beginPath(); c.moveTo(0, 10); c.quadraticCurveTo(-3, 14, -7, 12); c.moveTo(0, 10); c.quadraticCurveTo(3, 14, 7, 11); c.stroke(); }
-  c.strokeStyle = 'rgba(58,38,48,.55)'; c.lineWidth = 1.3; for (const sd of [-1, 1]) { c.beginPath(); c.moveTo(sd * 16, 8); c.lineTo(sd * 36, 4); c.moveTo(sd * 16, 12); c.lineTo(sd * 36, 14); c.stroke(); }
+  c.strokeStyle = sk.black ? 'rgba(220,230,250,.6)' : 'rgba(58,38,48,.55)'; c.lineWidth = 1.3; for (const sd of [-1, 1]) { c.beginPath(); c.moveTo(sd * 16, 8); c.lineTo(sd * 36, 4); c.moveTo(sd * 16, 12); c.lineTo(sd * 36, 14); c.stroke(); }
   if (expr !== 'happy' && expr !== 'purr') { c.fillStyle = 'rgba(255,120,150,0.4)'; ell(c, -22, 9, 5, 3); c.fill(); ell(c, 22, 9, 5, 3); c.fill(); }
   // eyewear
   const ey = of.eyes || 'none';

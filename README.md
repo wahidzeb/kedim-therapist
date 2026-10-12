@@ -2,7 +2,7 @@
 
 A cozy, funny therapy-office game for mobile and desktop browsers.
 
-You play as **Dr. Kedim**, a ginger tabby cat therapist with a red scarf, a dry sense of humour, a Ph.D. in Napping, and a habit of knocking things off the desk. Silly animal patients come to his office with funny problems. A dog is terrified of the mailman. A ghost is scared of the dark. A dragon has anger issues and keeps setting the couch on fire. Help them all feel better and graduate.
+You play as **Dr. Kedim**, a glossy black cat therapist with bright yellow-green eyes and a red scarf, a dry sense of humour, a Ph.D. in Napping, and a habit of knocking things off the desk. Silly animal patients come to his office with funny problems. A dog is terrified of the mailman. A ghost is scared of the dark. A dragon has anger issues and keeps setting the couch on fire. Help them all feel better and graduate.
 
 **Play:** https://zaibgames.com/kedim-therapist/
 
