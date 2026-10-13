@@ -1,0 +1,42 @@
+{
+  "id": "/kedim-therapist/",
+  "name": "Kedim Therapist",
+  "short_name": "Kedim Therapist",
+  "description": "Kedim Therapist by Zaib: a cozy, funny therapy-office game. Kedim the cat helps silly animal patients (a dog afraid of the mailman, a ghost afraid of the dark, a dragon with anger issues) with witty dialogue choices and 7 therapy mini-games. Decorate your office, dress up Kedim, and help 12 patients graduate.",
+  "lang": "en",
+  "start_url": "/kedim-therapist/?source=pwa",
+  "scope": "/kedim-therapist/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#5a3058",
+  "background_color": "#5a3058",
+  "categories": [
+    "games"
+  ],
+  "icons": [
+    {
+      "src": "/kedim-therapist/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/kedim-therapist/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/kedim-therapist/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/kedim-therapist/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
