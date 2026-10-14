@@ -10,10 +10,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#5a3058">
 <title>Kedim Therapist by Zaib</title>
+<meta name="apple-mobile-web-app-title" content="Kedim Therapist">
 <link rel="manifest" href="/kedim-therapist/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/kedim-therapist/icons/apple-touch-icon.png">
 <script id="zg-sw">if("serviceWorker"in navigator)addEventListener("load",function(){navigator.serviceWorker.register("/kedim-therapist/sw.js",{scope:"/kedim-therapist/"}).catch(function(){})});</script>
-<meta name="apple-mobile-web-app-title" content="Kedim Therapist">
 <meta name="description" content="Kedim Therapist by Zaib: a cozy, funny therapy-office game. Kedim the cat helps silly animal patients (a dog afraid of the mailman, a ghost afraid of the dark, a dragon with anger issues) with witty dialogue choices and 7 therapy mini-games. Decorate your office, dress up Kedim, and help 12 patients graduate.">
 <link rel="canonical" href="https://zaibgames.com/kedim-therapist/">
 <meta property="og:title" content="Kedim Therapist by Zaib">
@@ -101,6 +101,12 @@ canvas#game{position:fixed;left:0;top:0;width:100%;height:100%;display:block;tou
 .ib:active{transform:translateY(3px);box-shadow:0 1px 0 #34205e}
 .ib i{font-style:normal;font-size:24px;line-height:1}
 .ib.lock{filter:grayscale(1) brightness(.75)}
+.ib{position:relative}.ib .lockTag{white-space:nowrap;background:#3a2240;color:#ffe9a8;border:1px solid #fff;border-radius:999px;font-size:9px;line-height:12px;padding:0 5px;margin-top:1px}
+body:not(.land) #miniHud{flex-wrap:wrap;row-gap:6px}
+body:not(.land) #miniHud .tbar{order:9;flex:1 1 100%;max-width:none;height:14px}
+.typing{display:inline-flex;gap:6px;padding:8px 0}.typing i{width:10px;height:10px;border-radius:50%;background:#c08aa8;animation:tdot 1s infinite}.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes tdot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+#bPause:focus:not(:focus-visible),#bPause2:focus:not(:focus-visible){outline:none}
 .ib .badge{position:absolute;top:4px;right:6px;background:#ff3a6a;border-radius:999px;min-width:18px;height:18px;font-size:11px;line-height:18px;padding:0 4px;border:2px solid #fff}
 #hubBubble,#sayBubble{position:fixed;z-index:12;max-width:250px;background:#fff;color:#4a2a1a;border:3px solid #5a3058;border-radius:18px;padding:9px 13px;font-weight:800;font-size:15px;box-shadow:0 6px 16px rgba(0,0,0,.3);pointer-events:none;transform:translate(-50%,-100%);animation:pop .3s cubic-bezier(.2,1.5,.4,1)}
 #hubBubble::after{content:"";position:absolute;left:50%;bottom:-12px;margin-left:-9px;border:9px solid transparent;border-top-color:#5a3058;border-bottom:0}
@@ -132,7 +138,7 @@ canvas#game{position:fixed;left:0;top:0;width:100%;height:100%;display:block;tou
 .cho .tg{display:block;font-size:11px;font-weight:900;letter-spacing:1px;opacity:.55;text-transform:uppercase}
 .cho.hint{box-shadow:0 0 0 4px #fff27a,0 0 24px 6px #ffe14a,0 4px 0 #a8693f;animation:glowp 1s ease-in-out infinite}
 @keyframes glowp{50%{box-shadow:0 0 0 4px #fff27a,0 0 34px 12px #ffe14a,0 4px 0 #a8693f}}
-#miniHud .tbar{flex:1;max-width:320px;height:16px;border-radius:999px;background:rgba(0,0,0,.45);border:2px solid rgba(255,255,255,.4);overflow:hidden}
+#miniHud .tbar{flex:1;min-width:120px;max-width:320px;height:16px;border-radius:999px;background:rgba(0,0,0,.45);border:2px solid rgba(255,255,255,.4);overflow:hidden}
 #miniFill{height:100%;width:100%;background:linear-gradient(90deg,#3fdf8e,#ffd34a);border-radius:999px;box-shadow:inset 0 2px 0 rgba(255,255,255,.45)}
 #miniName{font-size:15px}
 .miIcon{font-size:64px;text-align:center;line-height:1;filter:drop-shadow(0 4px 0 rgba(0,0,0,.15));animation:bob 1.6s ease-in-out infinite}
@@ -240,7 +246,7 @@ body.land .cho .ic{width:32px;height:32px}
 <div id="hubBar" class="hidden">
   <button class="btn gold" id="bNext"><canvas id="nextPortrait" width="116" height="116"></canvas><span class="tx"><b id="nextName">Next Patient</b><small id="nextSub">Session 1</small></span><span class="go">▶</span></button>
   <div class="ibar">
-    <button class="ib" id="bWalk"><i>🚪</i>Walk-in</button>
+    <button class="ib" id="bWalk"><i>🚪</i>Walk-in<span class="lockTag hidden" id="walkLock"></span></button>
     <button class="ib" id="bNote"><i>📓</i>Notebook</button>
     <button class="ib" id="bShop"><i>🛋️</i>Shop</button>
     <button class="ib" id="bCal"><i>📅</i>Calendar</button>
@@ -281,6 +287,14 @@ body.land .cho .ic{width:32px;height:32px}
   <!-- Ad slot: hidden until a real ad is added. A future ad must sit 150px+ away from primary buttons. --><div class="adslot" aria-hidden="true"></div>
 </div>
 
+<div id="sTimeUp" class="screen dim hidden">
+  <div class="panel top" style="text-align:center">
+    <h2>Time's up!</h2>
+    <div class="miIcon">⏰</div>
+    <div class="desc">So close! Want another go? Your patient will wait.</div>
+    <div class="row"><button class="btn grey" id="bTuGo" style="flex:1">Keep going</button><button class="btn gold big" id="bTuRetry" style="flex:1">Retry</button></div>
+  </div>
+</div>
 <div id="sMiniIntro" class="screen dim hidden">
   <div class="panel top" style="text-align:center">
     <h2 id="miTitle">Mini-game</h2>
@@ -2048,7 +2062,7 @@ const SILLY_BLOTS = ['A potato having a crisis', 'My tax return', 'Two llamas ar
 const MINIS = {
   breath: { name: 'Breathe With Me', icon: '🫧', song: 'session', desc: 'Tap anywhere when the glowing ring meets the bubble. Slow and steady: in... and out...' },
   yarn: { name: 'Untangle Thoughts', icon: '🧶', song: 'mini', desc: 'Drag the yarn balls so no strands cross. Red strands are tangled, green ones are free!' },
-  memory: { name: 'Feelings Match', icon: '🃏', song: 'mini', desc: 'Flip two cards at a time and match the feelings. Fewer flips = happier patient!' },
+  memory: { name: 'Feelings Match', icon: '🃏', song: 'mini', desc: 'Flip two cards at a time and match the feelings. Fewer tries = happier patient!' },
   catch: { name: 'Worry Jar', icon: '🫙', song: 'mini', desc: 'Drag to move the jar. Catch the grey worry clouds, but let the golden good thoughts float past!' },
   blot: { name: 'Ink Blot Test', icon: '🎨', song: 'session', desc: 'What do you see? Pick the answer that fits your patient for insight... or the silly one for laughs.' },
   purr: { name: 'Purr Therapy', icon: '😽', song: 'session', desc: 'Tap when the needle is in the green zone to deliver a perfectly timed purr. Center = PERFECT!' },
@@ -2059,6 +2073,7 @@ function makeMini(id, diff, ctx) {
   const g = { id, t: -1.2, done: false, score: 0, fb: [], label: '', timeFrac: 1, ctx, diff, perfect: 0 };
   g.feedback = (s, nx, ny, col) => g.fb.push({ s, x: nx, y: ny, t: 0, col: col || '#fff' });
   const F = MINI_IMPL[id]; F.init(g, diff, ctx);
+  if (ctx && ctx.first && g.limit) { g.limit *= 1.6; g.left = g.limit; } // gentler first session
   g.update = dt => { g.t += dt; for (const f of g.fb) f.t += dt; g.fb = g.fb.filter(f => f.t < 1); if (g.t >= 0 && !g.done) F.update(g, dt); else if (g.done) g.endT = (g.endT || 0) + dt; };
   g.draw = (c, A, t) => { F.draw(g, c, A, t); for (const f of g.fb) { const a = 1 - f.t; c.globalAlpha = a; txt(c, f.s, A.x + f.x * A.w, A.y + f.y * A.h - f.t * 40, 24 + (1 - a) * 6, f.col, 'rgba(40,20,60,.8)'); } c.globalAlpha = 1;
     if (g.t < 0) { const n = Math.ceil(-g.t / 0.4); const k = (-g.t % 0.4) / 0.4; c.fillStyle = 'rgba(20,10,40,.35)'; rr(c, A.x, A.y, A.w, A.h, 26); c.fill(); txt(c, n > 2 ? 'Ready?' : n === 2 ? 'Set...' : 'Go!', A.x + A.w / 2, A.y + A.h / 2, 46 + k * 16, '#fff7c0', '#5a2a7a'); } };
@@ -2125,7 +2140,7 @@ const MINI_IMPL = {
     cross(g) { let k = 0; g.bad = g.E.map(() => false); for (let i = 0; i < g.E.length; i++) for (let j = i + 1; j < g.E.length; j++) { const [a, b] = g.E[i], [c2, d] = g.E[j]; if (a === c2 || a === d || b === c2 || b === d) continue; if (segCross(g.P[a], g.P[b], g.P[c2], g.P[d])) { k++; g.bad[i] = g.bad[j] = true; } } return k; },
     update(g, dt) { g.left -= dt; g.timeFrac = clamp(g.left / g.limit, 0, 1); const k = this.cross(g); g.label = k ? 'Tangles: ' + k : 'Untangled!';
       if (k === 0 && g.drag < 0) { g.done = true; g.score = clamp(0.55 + 0.45 * (g.left / g.limit) * 1.4, 0, 1); if (g.left / g.limit > 0.45) g.perfect = 1; SFX.good(); g.feedback('Untangled!', 0.5, 0.12, '#bfffd8'); }
-      else if (g.left <= 0) { g.done = true; g.score = clamp(0.4 * (1 - k / Math.max(1, g.init)), 0, 0.4); g.feedback('Time!', 0.5, 0.12, '#ffb0c0'); } },
+      else if (g.left <= 0) { g.done = true; g.score = clamp(0.4 * (1 - k / Math.max(1, g.init)), 0, 0.4); g.feedback('Time!', 0.5, 0.12, '#ffb0c0'); g.timeUp = true; } },
     down(g, x, y) { let bi = -1, bd = 0.012; g.P.forEach((p, i) => { const d = (p.x - x) ** 2 + (p.y - y) ** 2; if (d < bd) { bd = d; bi = i; } }); g.drag = bi; if (bi >= 0) { SFX.pop(); vibrate(8); } },
     move(g, x, y) { if (g.drag >= 0) { g.P[g.drag].x = clamp(x, 0.07, 0.93); g.P[g.drag].y = clamp(y, 0.14, 0.93); } },
     up(g) { g.drag = -1; },
@@ -2165,16 +2180,16 @@ const MINI_IMPL = {
       if (g.lock > 0) { g.lock -= dt; if (g.lock <= 0) { for (const i of g.open) g.cards[i].up = false; g.open = []; } }
       g.label = 'Pairs ' + g.matched + '/6';
       if (g.matched === 6) { g.done = true; g.score = clamp(1.15 - (g.moves - 6) * 0.045, 0.55, 1); if (g.moves <= 9) g.perfect = 1; }
-      else if (g.left <= 0) { g.done = true; g.score = g.matched / 6 * 0.75; g.feedback('Time!', 0.5, 0.5, '#ffb0c0'); }
+      else if (g.left <= 0) { g.done = true; g.score = g.matched / 6 * 0.75; g.feedback('Time!', 0.5, 0.5, '#ffb0c0'); g.timeUp = true; }
     },
-    rect(i) { const col = i % 3, row = Math.floor(i / 3); return { x: 0.06 + col * 0.3, y: 0.08 + row * 0.225, w: 0.27, h: 0.2 }; },
+    rect(i) { const col = i % 3, row = Math.floor(i / 3); return { x: 0.06 + col * 0.3, y: 0.06 + row * 0.212, w: 0.27, h: 0.19 }; },
     down(g, x, y) {
       if (g.lock > 0) return;
       for (let i = 0; i < 12; i++) { const r = this.rect(i), cd = g.cards[i]; if (x > r.x && x < r.x + r.w && y > r.y && y < r.y + r.h && !cd.up && !cd.done) { this.flip(g, i); return; } }
     },
     flip(g, i) {
       const cd = g.cards[i]; cd.up = true; g.open.push(i); SFX.flip(); vibrate(6);
-      if (g.open.length === 2) { g.moves++; const [a, b] = g.open; if (g.cards[a].f === g.cards[b].f) { g.cards[a].done = g.cards[b].done = true; g.open = []; g.matched++; SFX.good(g.matched); const r = this.rect(b); g.feedback(FEEL_NAME[g.cards[b].f] + '!', r.x + r.w / 2, r.y, '#fff27a'); } else { g.lock = 0.75; } }
+      if (g.open.length === 2) { g.moves++; const [a, b] = g.open; if (g.cards[a].f === g.cards[b].f) { g.cards[a].done = g.cards[b].done = true; g.open = []; g.matched++; SFX.good(g.matched); const r = this.rect(b); g.feedback(FEEL_NAME[g.cards[b].f] + '!', r.x + r.w / 2, r.y, '#fff27a'); } else { g.lock = 0.9; } }
     },
     bot(g, dt) {
       g.botT += dt; if (g.botT < 0.3 || g.lock > 0) return; g.botT = 0;
@@ -2193,7 +2208,7 @@ const MINI_IMPL = {
         else { const col = FEEL_COL[cd.f]; if (cd.done) glow(c, 0, 0, w * 0.8, col[0], 0.5); rr(c, -w / 2, -h / 2, w, h, 14); fillStroke(c, lgrad(c, 0, -h / 2, 0, h / 2, ['#fffaf0', '#fff0dc']), 3); ell(c, 0, -h * 0.08, Math.min(w, h) * 0.3, Math.min(w, h) * 0.3); fillStroke(c, rgrad(c, 0, -h * 0.08, 2, Math.min(w, h) * 0.3, [col[0], col[1]], -5, -6), 2.5); face(c, 0, -h * 0.1, Math.min(w, h) * 0.5, { expr: cd.f, t, ec: '#3a2a20' }); txt(c, FEEL_NAME[cd.f], 0, h * 0.34, Math.max(11, h * 0.13), col[1], null); }
         c.restore();
       }
-      txt(c, 'Flips: ' + g.moves, A.x + A.w / 2, A.y + A.h * 0.97, 15, '#fff', 'rgba(40,40,100,.6)');
+      txt(c, 'Tries: ' + g.moves, A.x + A.w / 2, A.y + A.h * 0.945, 15, '#fff', 'rgba(40,40,100,.6)');
     },
   },
   // ---------- worry jar ----------
@@ -2332,7 +2347,13 @@ function setCam(state, snap) {
   const L = G.land; let c;
   switch (state) {
     case 'title': c = L ? { x: 230, y: 400, z: 1.05, ax: 0.3, ay: 0.55 } : { x: 236, y: 440, z: 1.12, ax: 0.5, ay: 0.47 }; break;
-    case 'session': case 'mini': c = L ? { x: 222, y: 430, z: 1.25, ax: 0.25, ay: 0.55 } : { x: 222, y: 430, z: 1.38, ax: 0.5, ay: Math.min(0.48, 0.3 + (G.H / G.W - 1.5) * 0.25) }; break;
+    case 'session': case 'mini': {
+      // landscape: frame the room below the window so the HUD/title pill never sit on the window art
+      // portrait: fit sofa + armchair across the width and keep both cats above the dialogue / choice cards
+      const sat = parseFloat(getComputedStyle(document.body).getPropertyValue('--sat')) || 0;
+      if (L) { const z = 1.45, s = baseScale() * z; c = { x: 222, y: 430, z, ax: 0.25, ay: clamp((430 - 252) * s / G.H, 0.3, 0.55) }; }
+      else { const s = Math.min(G.W / 352, G.H / 560), z = s / baseScale(); c = { x: 224, y: 430, z, ax: 0.5, ay: clamp((sat + 104 + (430 - 300) * s) / G.H, 0.25, 0.5) }; }
+      break; }
     case 'shop': c = L ? { x: 205, y: 320, z: 0.85, ax: 0.27, ay: 0.5 } : { x: 205, y: 300, z: 0.66, ax: 0.5, ay: 0.22 }; break;
     case 'finale': c = L ? { x: 205, y: 420, z: 1.0, ax: 0.3, ay: 0.55 } : { x: 205, y: 420, z: 1.0, ax: 0.5, ay: 0.45 }; break;
     default: c = L ? { x: 210, y: 370, z: 1.0, ax: 0.27, ay: 0.52 } : { x: 214, y: 400, z: 1.12, ax: 0.5, ay: Math.min(0.5, 0.36 + (G.H / G.W - 1.5) * 0.2) };
@@ -2482,7 +2503,7 @@ function drawLighting(c, t) {
   if (QUALITY.lvl > 0) { const g = c.createRadialGradient(W / 2, H * 0.45, Math.min(W, H) * 0.35, W / 2, H * 0.45, Math.max(W, H) * 0.8); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(40,10,30,.45)'); c.fillStyle = g; c.fillRect(0, 0, W, H); }
 }
 function miniArea() {
-  const top = 64 + (parseFloat(getComputedStyle(document.body).getPropertyValue('--sat')) || 0);
+  const top = 64 + (G.land ? 0 : 26) + (parseFloat(getComputedStyle(document.body).getPropertyValue('--sat')) || 0);
   if (G.land) { const h = G.H - top - 12, w = Math.min(G.W - 24, h * 1.15, 640); return { x: (G.W - w) / 2, y: top, w, h }; }
   const w = Math.min(G.W - 20, 470), h = Math.min(G.H - top - 16, w * 1.45); return { x: (G.W - w) / 2, y: top + Math.max(0, (G.H - top - 16 - h) * 0.4), w, h };
 }
@@ -2553,7 +2574,7 @@ function nextStep() {
   const S = G.sess; if (!S) return; S.si++; const st = S.steps[S.si]; if (!st) return;
   S.choice = null; $('choices').classList.add('hidden'); G.kedim.talk = false; S.pt.talk = false;
   switch (st.t) {
-    case 'enter': SFX.knock(); S.wait = 0.6; S.entering = true; showDlg(null); break;
+    case 'enter': SFX.knock(); S.wait = 0.2; S.entering = true; showDlg({ who: 'p', text: '' }); $('dlgText').innerHTML = '<span class="typing"><i></i><i></i><i></i></span>'; break;
     case 'line': case 'react': startLine(st); break;
     case 'choice': startChoice(st); break;
     case 'mini': startMiniIntro(); break;
@@ -2582,6 +2603,7 @@ function showDlg(st) {
 function tapDialogue() {
   const S = G.sess; if (!S || G.state !== 'session' || G.paused) return;
   const st = curStep(); if (!st) return;
+  if (st.t === 'enter') { S.skipWalk = true; S.wait = 0; return; }
   if (st.t === 'line' || st.t === 'minireact' || st.t === 'react') { if (!S.line) return; if (!S.line.done) finishLine(); else { SFX.click(); nextStep(); } }
 }
 function updateSession(dt) {
@@ -2591,7 +2613,7 @@ function updateSession(dt) {
   P.squash = Math.max(0, P.squash - dt * 4);
   if (P.fx) { P.fxT += dt; if (P.fxT > 1.9) { P.fx = null; P.fxT = 0; } }
   if (P.peacockM != null) { P.peacockM = lerp(P.peacockM, S.mood / 100, 1 - Math.pow(0.1, dt)); }
-  if (S.entering) { S.wait -= dt; if (S.wait <= 0) { P.x = Math.min(SEAT.x, P.x + dt * 190); if (P.x >= SEAT.x) { P.x = SEAT.x; P.walking = false; S.entering = false; P.squash = 1; SFX.species(S.sp); P.emote = 'heart'; P.emote = null; nextStep(); } } return; }
+  if (S.entering) { S.wait -= dt; if (S.wait <= 0) { P.x = Math.min(SEAT.x, P.x + dt * (S.skipWalk ? 900 : 300)); if (P.x >= SEAT.x) { P.x = SEAT.x; P.walking = false; S.entering = false; P.squash = 1; SFX.species(S.sp); P.emote = 'heart'; P.emote = null; nextStep(); } } return; }
   if (S.leaving) { P.x -= dt * 220; if (P.x < -140) { S.leaving = false; P.vis = false; nextStep(); } return; }
   const L = S.line;
   if (L && !L.done) {
@@ -2668,13 +2690,16 @@ function startMini() {
   const S = G.sess; hideScreen('sMiniIntro');
   const pd = S.pid ? PATIENTS[S.pid] : S.data;
   const idx = S.walk ? 0.5 + Math.random() * 0.3 : SCHEDULE.indexOf(S.data.id) / 35;
-  G.mini = makeMini(S.data.mini, clamp(idx, 0, 1) * 0.9, { worries: pd.worries, goods: pd.goods, blots: pd.blots });
+  G.mini = makeMini(S.data.mini, clamp(idx, 0, 1) * 0.9, { worries: pd.worries, goods: pd.goods, blots: pd.blots, first: !S.walk && SCHEDULE.indexOf(S.data.id) === 0 });
   setState('mini'); $('miniName').textContent = MINIS[S.data.mini].icon + ' ' + MINIS[S.data.mini].name;
 }
 function updateMini(dt) {
   const g = G.mini; g.update(dt); if (G.botMini) g.bot(dt);
   $('miniFill').style.width = (g.timeFrac * 100) + '%'; $('miniLabel').textContent = g.label;
-  if (g.done && g.endT > 1.3) finishMini();
+  if (g.done && g.endT > 1.3) {
+    if (g.timeUp && !g.ack) { if (!g.tuShown) { g.tuShown = 1; SFX.miss(); show('sTimeUp'); } return; }
+    finishMini();
+  }
 }
 function finishMini() {
   const S = G.sess, g = G.mini; G.mini = null;
@@ -2830,6 +2855,7 @@ const HUD_IDS = ['hubTop', 'hubBar', 'sessTop', 'sessTitle', 'dlgWrap', 'miniHud
 function hud(ids) { for (const id of HUD_IDS) $(id).classList.toggle('hidden', !ids.includes(id)); }
 function setState(s) {
   G.state = s; setCam(s);
+  if ((s === 'session' || s === 'mini') && document.activeElement && document.activeElement !== document.body && document.activeElement.blur) document.activeElement.blur();
   $('hubBubble').classList.add('hidden'); G.bubbleT = 0;
   if (s === 'title') { hud([]); show('sTitle'); playMusic('title'); $('playTxt').textContent = SAVE.prog > 0 ? 'CONTINUE' : 'OPEN OFFICE'; }
   else if (s === 'hub') { hud(['hubTop', 'hubBar']); hideAllScreens(); refreshHub(); playMusic(SAVE.prog >= SCHEDULE.length ? 'ending' : 'office'); G.sess = null; G.idleT = 3; }
@@ -2850,7 +2876,7 @@ function refreshHub() {
   const done = SAVE.prog >= SCHEDULE.length;
   if (!done) { const se = SESSIONS[SCHEDULE[SAVE.prog]], pd = PATIENTS[se.pid]; $('nextName').textContent = (SAVE.dayDone >= PER_DAY ? 'Tomorrow: ' : 'Next: ') + pd.name; $('nextSub').textContent = 'Session ' + se.n + '/3 · ' + se.title; drawPortrait($('nextPortrait'), pd.sp, null, se.n === 1 ? 'worried' : 'neutral'); }
   else { $('nextName').textContent = 'Walk-in Clinic'; $('nextSub').textContent = 'Every patient graduated! Endless walk-ins await.'; drawPortrait($('nextPortrait'), 'mouse', null, 'love'); }
-  $('bWalk').classList.toggle('lock', SAVE.prog < 2);
+  $('bWalk').classList.toggle('lock', SAVE.prog < 2); { const n = Math.max(0, 2 - SAVE.prog), lk = $('walkLock'); lk.classList.toggle('hidden', !n); lk.textContent = '🔒 ' + n + ' more'; $('bWalk').setAttribute('aria-label', n ? 'Walk-in, unlocks after ' + n + ' more session' + (n > 1 ? 's' : '') : 'Walk-in'); }
   const unseen = ACHS.filter(a => SAVE.ach[a.id] && !(SAVE.achSeen || {})[a.id]).length; $('achBadge').classList.toggle('hidden', !unseen); $('achBadge').textContent = unseen;
 }
 function startStory() {
@@ -3140,6 +3166,8 @@ function wire() {
   on('bAch', () => openAch()); on('bAchBack', () => { hideScreen('sAch'); refreshHub(); });
   on('bWStart', () => startWalkShift()); on('bWDaily', () => startDaily()); on('bWBack', () => hideScreen('sWalk'));
   on('bMiStart', () => startMini());
+  on('bTuRetry', () => { hideScreen('sTimeUp'); startMini(); });
+  on('bTuGo', () => { hideScreen('sTimeUp'); if (G.mini) G.mini.ack = 1; });
   on('bPause', () => pauseGame()); on('bPause2', () => pauseGame()); on('bResume', () => resumeGame());
   on('bHint', () => useHint());
   on('bPSound', () => { SAVE.settings.sound = !SAVE.settings.sound; saveGame(); applyVolumes(); refreshSettings(); });

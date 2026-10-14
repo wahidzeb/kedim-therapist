@@ -38,5 +38,21 @@
       "type": "image/png",
       "purpose": "maskable"
     }
+  ],
+  "screenshots": [
+    {
+      "src": "/kedim-therapist/screenshots/narrow.png",
+      "sizes": "786x1704",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Kedim Therapist"
+    },
+    {
+      "src": "/kedim-therapist/screenshots/wide.png",
+      "sizes": "1704x786",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Kedim Therapist"
+    }
   ]
 }
