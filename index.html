@@ -139,6 +139,8 @@ body:not(.land) #miniHud .tbar{order:9;flex:1 1 100%;max-width:none;height:14px}
 .cho.hint{box-shadow:0 0 0 4px #fff27a,0 0 24px 6px #ffe14a,0 4px 0 #a8693f;animation:glowp 1s ease-in-out infinite}
 @keyframes glowp{50%{box-shadow:0 0 0 4px #fff27a,0 0 34px 12px #ffe14a,0 4px 0 #a8693f}}
 #miniHud .tbar{flex:1;min-width:120px;max-width:320px;height:16px;border-radius:999px;background:rgba(0,0,0,.45);border:2px solid rgba(255,255,255,.4);overflow:hidden}
+#miniHud .tbar.low{border-color:#ff5a5a;animation:lowp .5s ease-in-out infinite alternate}#miniHud .tbar.low #miniFill{background:linear-gradient(90deg,#ff3a3a,#ff7a5a)}
+@keyframes lowp{from{transform:scale(1);box-shadow:0 0 0 rgba(255,60,60,0)}to{transform:scale(1.04);box-shadow:0 0 14px rgba(255,60,60,.9)}}
 #miniFill{height:100%;width:100%;background:linear-gradient(90deg,#3fdf8e,#ffd34a);border-radius:999px;box-shadow:inset 0 2px 0 rgba(255,255,255,.45)}
 #miniName{font-size:15px}
 .miIcon{font-size:64px;text-align:center;line-height:1;filter:drop-shadow(0 4px 0 rgba(0,0,0,.15));animation:bob 1.6s ease-in-out infinite}
@@ -2696,6 +2698,7 @@ function startMini() {
 function updateMini(dt) {
   const g = G.mini; g.update(dt); if (G.botMini) g.bot(dt);
   $('miniFill').style.width = (g.timeFrac * 100) + '%'; $('miniLabel').textContent = g.label;
+  { const low = !!g.limit && !g.done && g.t >= 0 && g.left <= 5; document.querySelector('#miniHud .tbar').classList.toggle('low', low); if (low && !g.hurry) { g.hurry = 1; toast('⏳ Hurry!', 'warn'); SFX.miss && SFX.miss(); } }
   if (g.done && g.endT > 1.3) {
     if (g.timeUp && !g.ack) { if (!g.tuShown) { g.tuShown = 1; SFX.miss(); show('sTimeUp'); } return; }
     finishMini();
